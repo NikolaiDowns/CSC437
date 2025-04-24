@@ -1,0 +1,25 @@
+h1 {
+    color: #182d3b;
+    
+}
+
+p {
+    color: #006DAA;
+    
+}
+
+h3 {
+    color: #182d3b;
+}
+
+a {
+    color: #182d3b
+}
+
+body {
+    background-color: var(--color-background);
+    line-height: 1.5;
+}
+img {
+    max-width: 100%
+}

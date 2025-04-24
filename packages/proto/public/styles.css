@@ -1,0 +1,55 @@
+:root { 
+    --box-bg: #035E7B;
+    --box-radius: 20px;
+    --gap: 20px;
+    --box-height: 150px; 
+}
+
+/* remove or loosen the container’s width constraint */
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    /* you can delete max-width if you want each box to size individually */
+    /* max-width: 900px; */
+    width: 100%;
+    align-items: center;    /* centers children horizontally */
+  }
+  
+  /* make every box fill up to its max-width */
+  .box {
+    background: var(--box-bg);
+    border-radius: var(--box-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    text-align: center;
+  
+    width: 100%;            /* fill parent (the container’s width, which is 100%) */
+    max-width: var(--box-max);/* override per box via a CSS variable */
+  }
+  
+  /* now give each box its own --box-max */
+  
+  .top {
+    --box-max: 600px;
+    height: var(--box-height);
+  }
+  
+  .middle {
+    --box-max: 300px;       /* each middle one caps at 300px */
+    height: var(--box-height);
+  }
+  
+  .bottom {
+    --box-max: 500px;
+    height: var(--box-height);
+  }
+  
+  /* row still flexes, but children have their own max widths */
+  .row {
+    display: flex;
+    gap: var(--gap);
+  }
+  

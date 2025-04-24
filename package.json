@@ -1,0 +1,22 @@
+{
+  "name": "csc437",
+  "version": "1.0.0",
+  "description": "Walk Hard Website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NikolaiDowns/CSC437.git"
+  },
+  "author": "Nikolai Downs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NikolaiDowns/CSC437/issues"
+  },
+  "homepage": "https://github.com/NikolaiDowns/CSC437#readme",
+  "workspaces": [
+      "packages/*"
+  ]
+}
