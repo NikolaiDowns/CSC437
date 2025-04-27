@@ -1,8 +1,16 @@
 :root { 
-    --box-bg: #035E7B;
+  --color-primary:   #182d3b; /* WalkHard Blue */
+  --color-secondary: #0353A4; /* Sapphire Blue */
+  --color-accent:    #006DAA; /* Sky Blue */
+  --color-box:       #cde1f5; /* Columbia Blue */
+
+  --color-background: whitesmoke; /* Off White */
+  
+  
+  --box-bg: #006DAA;
     --box-radius: 20px;
     --gap: 20px;
-    --box-height: 150px; 
+    --box-height: 300px; 
 }
 
 /* remove or loosen the container’s width constraint */
@@ -18,13 +26,14 @@
   
   /* make every box fill up to its max-width */
   .box {
-    background: var(--box-bg);
+    background: var(--color-box);
     border-radius: var(--box-radius);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem;
     text-align: center;
+    color: var(--color-primary);
   
     width: 100%;            /* fill parent (the container’s width, which is 100%) */
     max-width: var(--box-max);/* override per box via a CSS variable */
@@ -33,23 +42,134 @@
   /* now give each box its own --box-max */
   
   .top {
-    --box-max: 600px;
-    height: var(--box-height);
+    width: auto;
+    display: inline-flex;
+    --box-max: 90%;
+    /* height: var(--box-height); */
+    font-size: 4rem;
+    padding: 1.25rem 2rem;
   }
   
   .middle {
-    --box-max: 300px;       /* each middle one caps at 300px */
-    height: var(--box-height);
+    --box-max: 47%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    /* flex: 1 */
   }
   
   .bottom {
-    --box-max: 500px;
-    height: var(--box-height);
+    width: auto;
+    display: inline-flex;
+    --box-max: 60%;
+    font-size: 1.5rem;
+    padding: 1rem 1.75rem;
+  }
+
+  .mission {
+    --box-max: 94%;
+    aspect-ratio: 2 / 1;
+    height: auto;
   }
   
   /* row still flexes, but children have their own max widths */
   .row {
     display: flex;
     gap: var(--gap);
+    width: 100%;          /* now it really is 100% of .container */
+    justify-content: center;
+  }
+
+  .box-icon {
+    width: 6rem;       /* control the icon size */
+    height: auto;
+    margin-right: 0.5rem;/* space between icon and text */
+  }
+
+  .box-icon-small {
+    width: 2.5rem;       /* control the icon size */
+    height: auto;
+    /* margin-right: 0.5rem;/* space between icon and text */
+    color: whitesmoke;
+    vertical-align: middle;
+  }
+
+  
+
+  header.toolbar {
+    box-sizing: border-box;        /* include padding in the total height */
+    position: fixed;
+    top: 0; left: 0; right: 0;
+  
+    /* use min-height so flex-centering can still expand it if needed */
+    min-height: 50px !important;  
+    /* vertical padding as backup if content grows */
+    padding: .25rem 1rem !important;
+  
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    background: var(--color-background);
+    color: var(--color-primary);
+    z-index: 1000;
+  }
+
+  .toolbar-left {
+    font-size: 2rem;
+    padding: .5rem 1rem;
+    align-items: left;
+  }
+
+  .toolbar-right a {
+    text-decoration: none; /* remove underlines */
+    color: inherit;        /* match the toolbar’s text color */
+    margin: 0 .5rem;
+    /* optional hover style: */
+    transition: color 0.2s;
+       &:hover { color: var(--color-accent); }
   }
   
+  /* size your icons to fit inside the toolbar’s height */
+  .toolbar-icon {
+    height: 32px;             /* or whatever fits inside your 80px-tall bar */
+    width: auto;
+    margin-right: 1rem;       /* space between icons */
+  }
+  
+  /* push your page content down so it doesn’t sit under the toolbar */
+  .container {
+    margin-top: 70px;         /* match the toolbar’s height */
+  }
+  
+  .box-icon-small svg path {
+    /* override the SVG’s original fill="#000000" */
+    fill: var(--color-primary) !important;  /* or whatever color you need */
+    stroke: none;
+  }
+
+  .a {
+    margin-right: 1rem;
+    margin-left: .5rem;
+    color: var(--color-primary);
+  }
+
+  .picture-link {
+    padding: 0;
+    overflow: hidden;          /* clip any overflow */
+    display: flex;             /* let us center if needed */
+  }
+  .picture-link img {
+    width: 100%;               /* fill the box’s width */
+    height: 100%;              /* fill the box’s height */
+    object-fit: cover;         /* crop/scale to cover fully */
+    object-position: center;   /* center the focal point */
+    border-radius: inherit;    /* match your box’s rounding */
+  }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: var(--color-background);
+  }
+  h1, .toolbar {
+    font-weight: 600; /* semi-bold */
+  }

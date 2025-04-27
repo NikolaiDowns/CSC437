@@ -1,51 +1,67 @@
+<!-- index.html -->
 <!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>WalkHard</title>
-    <link rel="stylesheet" href="/styles/reset.css">
-    <link rel="stylesheet" href="/styles/tokens.css">
-    <link rel="stylesheet" href="/styles/page.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>True Walk</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"
+    rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>WALK HARD</h1>
-        <img src="history/pics/walkhard.png" alt="walkHardLogo" width="205" height="200" loading="eager">
+
+  <body>
+    <header class="toolbar">
+      <div class="toolbar-left">
+        <!-- <img src="walkhard.svg" alt="True Walk logo" class="box-icon-small" /> -->
+        <span
+          class="box-icon-small logo-mask"
+          role="img"
+          aria-label="True Walk logo"
+        ></span>
+        TRUE WALK
+      </div>
+
+      <div class="toolbar-right">
+
+        <a href="signup.html">Sign Up</a>
+        <a href="login.html">Login</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="about.html">About Us</a>
+        <a href="options.html">Options</a>
+
+      </div>
+      <!-- you can add a .toolbar-title or .toolbar-right here -->
     </header>
 
-    <section>
-        <p>Take your step towards recovery.</p>
-    </section>
+  <div class="container">
 
-    <section>
-        <h3>Your Walker History</h3>
-        <nav class="UserHistory">
-            <ul>
-              <li><a href="history/day.html">Today's usage</a></li>
-              <li><a href="history/week.html">Week's usage</a></li>
-              <li><a href="history/month.html">Month's usage</a></li>
-              <li><a href="history/year.html">Year's usage</a></li>
-            </ul>
-        </nav>
-    </section>
+    <div class="row">
+      <!-- <a href="page1.html" class="box middle">Purchasing</a> -->
+      <a href="purchasing.html" class="box middle picture-link">
+        <img src="handle.png" alt="Purchasing" />
+      </a>
 
-    <section>
-        <h3>Analyze Walker Usage</h3>
-        <nav class="UserHistory"></nav>
-            <ul>
-              <li><a href="analyze.html">Analysis</a></li>
-            </ul>
-        </nav>
-    </section>
+      <a href="index2.html" class="box middle picture-link">
+        <img src="history/pics/IMG_0917.jpg" alt="Track Progress" />
+      </a>
+      <!-- <a href="index2.html" class="box middle">Track Progress</a> -->
+    </div>
 
-    <section>
-        <h3>Share Walker Usage</h3>
-        <nav class="UserHistory"></nav>
-            <ul>
-              <li><a href="share.html">Share</a></li>
-            </ul>
-        </nav>
-    </section>
+    <div class="box bottom">
+      <img src="walkhard.svg" alt="True Walk logo" class="box-icon" />
+      "Sometimes the smallest step in the right direction ends up being the biggest step of your life"
+    </div>
 
+    <div class="box mission">
+      <a href="page1.html" class="box mission">Our Mission</a>
+    </div>
 
+  </div>
 </body>
 </html>
