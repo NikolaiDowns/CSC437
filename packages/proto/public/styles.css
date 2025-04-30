@@ -1,13 +1,13 @@
 :root { 
-  --color-primary:   #182d3b; /* WalkHard Blue */
+  --color-primary: white; /*   #182d3b; /* WalkHard Blue */
   --color-secondary: #0353A4; /* Sapphire Blue */
   --color-accent:    #006DAA; /* Sky Blue */
-  --color-box:       #cde1f5; /* Columbia Blue */
+  --color-box: rgba(0, 0, 0, 0.75); /*      white; /* Columbia Blue */
 
-  --color-background: whitesmoke; /* Off White */
+  --color-background: #182d3b; /*whitesmoke; /* Off White */
   
   
-  --box-bg: #006DAA;
+  --box-bg: White;
     --box-radius: 20px;
     --gap: 20px;
     --box-height: 300px; 
@@ -69,6 +69,24 @@
     --box-max: 94%;
     aspect-ratio: 2 / 1;
     height: auto;
+  }
+
+  .overlay-text {
+    position: absolute;
+    top: 2rem;        /* distance from the top edge */
+    left: 2rem;       /* distance from the left edge */
+    /* remove the centering transform */
+    transform: none;
+  
+    /* keep these for readability */
+    margin: 0;
+    padding: .5rem .5rem;
+    color: var(--color-primary);
+    /* background: rgba(0, 0, 0, 0.5); */
+    border-radius: 0.25rem;
+    white-space: nowrap;
+    font-size: 2rem;
+    pointer-events: none;
   }
   
   /* row still flexes, but children have their own max widths */
@@ -147,6 +165,15 @@
     stroke: none;
   }
 
+  .logo-mask {
+    /* box sizing & rounding inherited from .box */
+    padding: 0;                      /* kill any inset padding */
+    background-color: var(--color-primary);
+    /* turn the SVG into a mask that “cuts out” the shape: */
+    -webkit-mask: url('walkhard.svg') no-repeat center/contain;
+            mask: url('walkhard.svg') no-repeat center/contain;
+  }
+
   .a {
     margin-right: 1rem;
     margin-left: .5rem;
@@ -156,20 +183,4 @@
   .picture-link {
     padding: 0;
     overflow: hidden;          /* clip any overflow */
-    display: flex;             /* let us center if needed */
-  }
-  .picture-link img {
-    width: 100%;               /* fill the box’s width */
-    height: 100%;              /* fill the box’s height */
-    object-fit: cover;         /* crop/scale to cover fully */
-    object-position: center;   /* center the focal point */
-    border-radius: inherit;    /* match your box’s rounding */
-  }
-
-  body {
-    font-family: 'Open Sans', sans-serif;
-    background-color: var(--color-background);
-  }
-  h1, .toolbar {
-    font-weight: 600; /* semi-bold */
-  }
+    display: flex;             /* let us cent
