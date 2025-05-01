@@ -1,16 +1,52 @@
 :root { 
-  --color-primary: white; /*   #182d3b; /* WalkHard Blue */
+  --color-primary: #182d3b; /* WalkHard Blue */
   --color-secondary: #0353A4; /* Sapphire Blue */
   --color-accent:    #006DAA; /* Sky Blue */
-  --color-box: rgba(0, 0, 0, 0.75); /*      white; /* Columbia Blue */
+  --color-box: white; /* Columbia Blue */
 
-  --color-background: #182d3b; /*whitesmoke; /* Off White */
+  --color-background: whitesmoke; /* Off White */
   
   
   --box-bg: White;
     --box-radius: 20px;
     --gap: 20px;
     --box-height: 300px; 
+}
+
+.theme {
+  /* your light‐mode defaults */
+  --color-primary:   #182d3b;
+  --color-background: whitesmoke;
+  --color-box:       white;
+
+  transition: color 0.3s;
+  background: none/* var(--color-background);
+  /* color: var(--color-primary); */
+}
+
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.theme-toggle:hover {
+  background: var(--color-accent);
+  color: var(--color-background);
+}
+
+header.toolbar {
+  background: var(--color-background);
+}
+
+/* when checked, flip to dark values */
+#theme-switch:checked ~ .theme {
+  --color-primary:   white;
+  --color-background: #182d3b;
+  --color-box:       #404040;
 }
 
 /* remove or loosen the container’s width constraint */
@@ -22,6 +58,7 @@
     /* max-width: 900px; */
     width: 100%;
     align-items: center;    /* centers children horizontally */
+    background: var(--color-background);
   }
   
   /* make every box fill up to its max-width */
@@ -183,4 +220,4 @@
   .picture-link {
     padding: 0;
     overflow: hidden;          /* clip any overflow */
-    display: flex;             /* let us cent
+    dis

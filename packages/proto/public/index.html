@@ -12,62 +12,72 @@
     href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"
     rel="stylesheet">
 </head>
+<!-- <input id="theme-switch" type="checkbox" /> -->
+<div class="theme">
 <body>
 
   <body>
-    <header class="toolbar">
-      <div class="toolbar-left">
-        <img src="walkhard.svg" alt="True Walk logo" class="box-icon-small" />
-        <!-- <span
-          class="box-icon-small logo-mask"
-          role="img"
-          aria-label="True Walk logo"
-        ></span> -->
-        TRUE WALK
+    <script>
+      const btn = document.getElementById('theme-toggle');
+      btn.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+      });
+    </script>
+    
+      <header class="toolbar">
+        <div class="toolbar-left">
+          <img src="walkhard.svg" alt="True Walk logo" class="box-icon-small" />
+          <!-- <span
+            class="box-icon-small logo-mask"
+            role="img"
+            aria-label="True Walk logo"
+          ></span> -->
+          TRUE WALK
+        </div>
+
+        <div class="toolbar-right">
+
+          <a href="signup.html">Sign Up</a>
+          <a href="login.html">Login</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="about.html">About Us</a>
+          <a href="options.html">Options</a>
+          <!-- <label for="theme-switch" class="theme-label">Dark mode</label> -->
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+            Dark mode
+          </button>
+
+        </div>
+      </header>
+
+    <div class="container">
+
+      <div class="row">
+        <!-- <a href="page1.html" class="box middle">Purchasing</a> -->
+        <a href="purchasing.html" class="box middle picture-link">
+          <img src="handle.png" alt="Purchasing" />
+          <span class="overlay-text">Purchasing</span>
+        </a>
+
+        <a href="index2.html" class="box middle picture-link">
+          <img src="images/Track Progress.jpg" alt="Track Progress" />
+          <span class="overlay-text">Track Progress</span>
+        </a>
+        <!-- <a href="index2.html" class="box middle">Track Progress</a> -->
       </div>
 
-      <div class="toolbar-right">
-
-        <a href="signup.html">Sign Up</a>
-        <a href="login.html">Login</a>
-        <a href="pricing.html">Pricing</a>
-        <a href="contact.html">Contact Us</a>
-        <a href="about.html">About Us</a>
-        <a href="options.html">Options</a>
-        <!-- <label>
-          <input type="checkbox" autocomplete="off" />
-          Dark mode
-        </label> -->
-
+      <div class="box bottom">
+        <img src="walkhard.svg" alt="True Walk logo" class="box-icon" />
+        "Sometimes the smallest step in the right direction ends up being the biggest step of your life"
       </div>
-      <!-- you can add a .toolbar-title or .toolbar-right here -->
-    </header>
 
-  <div class="container">
-
-    <div class="row">
-      <!-- <a href="page1.html" class="box middle">Purchasing</a> -->
-      <a href="purchasing.html" class="box middle picture-link">
-        <img src="images/handle_inv.jpg" alt="Purchasing" />
-        <span class="overlay-text">Purchasing</span>
-      </a>
-
-      <a href="index2.html" class="box middle picture-link">
-        <img src="images/Track Progress.jpg" alt="Track Progress" />
-        <span class="overlay-text">Track Progress</span>
-      </a>
-      <!-- <a href="index2.html" class="box middle">Track Progress</a> -->
-    </div>
-
-    <div class="box bottom">
-      <img src="walkhard.svg" alt="True Walk logo" class="box-icon" />
-      "Sometimes the smallest step in the right direction ends up being the biggest step of your life"
-    </div>
-
-    <div class="box mission">
-      <a href="page1.html" class="box mission">Our Mission</a>
-    </div>
+      <div class="box mission">
+        <a href="page1.html" class="box mission">Our Mission</a>
+      </div>
 
   </div>
-</body>
+  </body>
+<!-- </body> -->
+</div>
 </html>
