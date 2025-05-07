@@ -17,12 +17,6 @@
 <body>
 
   <body>
-    <script>
-      const btn = document.getElementById('theme-toggle');
-      btn.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-      });
-    </script>
     
       <header class="toolbar">
         <div class="toolbar-left">
@@ -43,10 +37,40 @@
           <a href="contact.html">Contact Us</a>
           <a href="about.html">About Us</a>
           <a href="options.html">Options</a>
-          <!-- <label for="theme-switch" class="theme-label">Dark mode</label> -->
+          <!-- <label for="theme-toggle" class="theme-label">Dark mode</label> -->
+          
           <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
             Dark mode
           </button>
+          <script>
+            // wait for the DOM so querySelectorAll actually finds your images
+            document.addEventListener('DOMContentLoaded', () => {
+              const btn = document.getElementById('theme-toggle');
+              // select any element that has both data-light and data-dark
+              const themedEls = document.querySelectorAll('[data-light][data-dark]');
+          
+              btn.addEventListener('click', () => {
+                // toggle your .dark class on <html>
+                const isDark = document.documentElement.classList.toggle('dark');
+                // update button text/aria-label
+                btn.textContent = isDark ? 'Light mode' : 'Dark mode';
+                btn.setAttribute('aria-label',
+                  isDark ? 'Toggle light mode' : 'Toggle dark mode'
+                );
+          
+                // swap each element’s image
+                themedEls.forEach(el => {
+                  // if it's an <img>, change src; otherwise, change background-image
+                  if (el.tagName.toLowerCase() === 'img') {
+                    el.src = isDark ? el.dataset.dark : el.dataset.light;
+                  } else {
+                    el.style.backgroundImage = 
+                      `url(${isDark ? el.dataset.dark : el.dataset.light})`;
+                  }
+                });
+              });
+            });
+          </script>
 
         </div>
       </header>
@@ -56,12 +80,22 @@
       <div class="row">
         <!-- <a href="page1.html" class="box middle">Purchasing</a> -->
         <a href="purchasing.html" class="box middle picture-link">
-          <img src="handle.png" alt="Purchasing" />
+          <img
+            data-light="handle.png"
+            data-dark="images/handle_inv3.jpg"
+            src="handle.png" 
+            alt="Purchasing" 
+          />
           <span class="overlay-text">Purchasing</span>
         </a>
 
         <a href="index2.html" class="box middle picture-link">
-          <img src="images/Track Progress.jpg" alt="Track Progress" />
+          <img
+            data-light="images/Track Progress.jpg"
+            data-dark="images/Track Progress_inv3.jpg"
+            src="images/Track Progress.jpg" 
+            alt="Purchasing" 
+          />
           <span class="overlay-text">Track Progress</span>
         </a>
         <!-- <a href="index2.html" class="box middle">Track Progress</a> -->
