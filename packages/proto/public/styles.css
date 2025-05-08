@@ -6,23 +6,20 @@
 
   --color-background: whitesmoke; /* Off White */
   
-  
   --box-bg: White;
-    --box-radius: 20px;
-    --gap: 20px;
-    --box-height: 300px; 
+  --box-radius: 20px;
+  --gap: 20px;
+  --box-height: 300px; 
 }
 
 
-html.dark {
-  /* your light‐mode defaults */
+html.dark { /* dark mode */
   --color-primary:   whitesmoke;
   --color-background: rgb(40, 40, 40);
   --color-box:       #182d3b;
 
   transition: color 0.3s;
-  background: none/* var(--color-background);
-  /* color: var(--color-primary); */
+  background: none;
 }
 
 .theme-toggle {
@@ -33,14 +30,11 @@ html.dark {
   font-size: 1rem;
   font-weight: 600;
   margin: 0 .5rem;
-  /* align-items: right; */
   
-  /* border-radius: 4px; */
   cursor: pointer;
   transition: color 0.2s;
 }
 .theme-toggle:hover {
-  /* background: var(--color-accent); */
   color: var(--color-accent);
 }
 
@@ -48,22 +42,13 @@ header.toolbar {
   background: var(--color-background);
 }
 
-/* when checked, flip to dark values */
-#theme-switch:checked ~ .theme {
-  --color-primary:   white;
-  --color-background: #182d3b;
-  --color-box:       #404040;
-}
 
-/* remove or loosen the container’s width constraint */
 .container {
     display: flex;
     flex-direction: column;
     gap: var(--gap);
-    /* you can delete max-width if you want each box to size individually */
-    /* max-width: 900px; */
     width: 100%;
-    align-items: center;    /* centers children horizontally */
+    align-items: center;
     background: var(--color-background);
   }
   
@@ -100,26 +85,8 @@ header.toolbar {
     --box-max: 47%;
     aspect-ratio: 1/1;
     height: auto;
-    /* add these: */
-    /* border-radius: var(--box-radius, 20px);
-    overflow: hidden; */
   }
-
-  /* .graph {
-    position: relative; 
-    --box-max: 47%;
-    aspect-ratio: 1/1;
-    height: auto;
-    overflow: hidden;
-  } */
   
-  /* Absolutely fill the box with the chart */
-  /* .graph > bar-chart {
-    position: absolute;
-    inset: 0;
-  } */
-  
-  /* Overlay text in the top-left corner */
   .box.graph .overlay {
     position: absolute;
     top: 1rem;
@@ -135,7 +102,6 @@ header.toolbar {
     width: auto;
     display: inline-flex;
     --box-max: 90%;
-    /* height: var(--box-height); */
     font-size: 4rem;
     padding: 1.25rem 2rem;
   }
@@ -144,7 +110,6 @@ header.toolbar {
     --box-max: 47%;
     aspect-ratio: 1 / 1;
     height: auto;
-    /* flex: 1 */
   }
   
   .bottom {
@@ -165,54 +130,45 @@ header.toolbar {
 
   .overlay-text {
     position: absolute;
-    top: 2rem;        /* distance from the top edge */
-    left: 2rem;       /* distance from the left edge */
-    /* remove the centering transform */
+    top: 2rem;        
+    left: 2rem;
     transform: none;
   
-    /* keep these for readability */
     margin: 0;
     padding: .5rem .5rem;
     color: var(--color-primary);
-    /* background: rgba(0, 0, 0, 0.5); */
     border-radius: 0.25rem;
     white-space: nowrap;
     font-size: 2rem;
     pointer-events: none;
   }
   
-  /* row still flexes, but children have their own max widths */
   .row {
     display: flex;
     gap: var(--gap);
-    width: 100%;          /* now it really is 100% of .container */
+    width: 100%;
     justify-content: center;
   }
 
   .box-icon {
-    width: 6rem;       /* control the icon size */
+    width: 6rem;
     height: auto;
-    margin-right: 0.5rem;/* space between icon and text */
+    margin-right: 0.5rem;
   }
 
   .box-icon-small {
-    width: 2.5rem;       /* control the icon size */
+    width: 2.5rem;
     height: auto;
-    /* margin-right: 0.5rem;/* space between icon and text */
     color: whitesmoke;
     vertical-align: middle;
   }
 
-  
-
   header.toolbar {
-    box-sizing: border-box;        /* include padding in the total height */
+    box-sizing: border-box;
     position: fixed;
     top: 0; left: 0; right: 0;
   
-    /* use min-height so flex-centering can still expand it if needed */
     min-height: 50px !important;  
-    /* vertical padding as backup if content grows */
     padding: .25rem 1rem !important;
   
     display: flex;
@@ -231,37 +187,31 @@ header.toolbar {
   }
 
   .toolbar-right a {
-    text-decoration: none; /* remove underlines */
-    color: inherit;        /* match the toolbar’s text color */
+    text-decoration: none;
+    color: inherit;
     margin: 0 .5rem;
-    /* optional hover style: */
     transition: color 0.2s;
        &:hover { color: var(--color-accent); }
   }
   
-  /* size your icons to fit inside the toolbar’s height */
   .toolbar-icon {
-    height: 32px;             /* or whatever fits inside your 80px-tall bar */
+    height: 32px;
     width: auto;
-    margin-right: 1rem;       /* space between icons */
+    margin-right: 1rem;
   }
   
-  /* push your page content down so it doesn’t sit under the toolbar */
   .container {
-    margin-top: 70px;         /* match the toolbar’s height */
+    margin-top: 70px; 
   }
   
   .box-icon-small svg path {
-    /* override the SVG’s original fill="#000000" */
-    fill: var(--color-primary) !important;  /* or whatever color you need */
+    fill: var(--color-primary) !important;
     stroke: none;
   }
 
   .logo-mask {
-    /* box sizing & rounding inherited from .box */
-    padding: 0;                      /* kill any inset padding */
+    padding: 0;
     background-color: var(--color-primary);
-    /* turn the SVG into a mask that “cuts out” the shape: */
     -webkit-mask: url('walkhard.svg') no-repeat center/contain;
             mask: url('walkhard.svg') no-repeat center/contain;
   }
@@ -274,8 +224,8 @@ header.toolbar {
 
   .picture-link {
     padding: 0;
-    overflow: hidden;          /* clip any overflow */
-    display: flex;             /* let us center if needed */
+    overflow: hidden;
+    display: flex;
     position: relative;
     border: 3px solid transparent;
     border-radius: var(--box-radius);

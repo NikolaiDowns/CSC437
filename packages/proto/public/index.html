@@ -12,24 +12,19 @@
     href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"
     rel="stylesheet">
 </head>
-<!-- <input id="theme-switch" type="checkbox" /> -->
-<div class="theme">
+<div class="theme"> <!-- Dark/Light mode -->
 <body>
 
   <body>
     
-      <header class="toolbar">
-        <div class="toolbar-left">
+      <header class="toolbar"> <!-- Header -->
+
+        <div class="toolbar-left"> <!-- Logo & Name  -->
           <img src="walkhard.svg" alt="True Walk logo" class="box-icon-small" />
-          <!-- <span
-            class="box-icon-small logo-mask"
-            role="img"
-            aria-label="True Walk logo"
-          ></span> -->
           TRUE WALK
         </div>
 
-        <div class="toolbar-right">
+        <div class="toolbar-right"> <!-- Header links/options -->
 
           <a href="signup.html">Sign Up</a>
           <a href="login.html">Login</a>
@@ -37,28 +32,27 @@
           <a href="contact.html">Contact Us</a>
           <a href="about.html">About Us</a>
           <a href="options.html">Options</a>
-          <!-- <label for="theme-toggle" class="theme-label">Dark mode</label> -->
           
+          <!-- Dark/Light mode button -->
           <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-            Dark mode
+            Dark mode <!-- Default is light mode -->
           </button>
           <script>
-            // wait for the DOM so querySelectorAll actually finds your images
+            // querySelectorAll find images
             document.addEventListener('DOMContentLoaded', () => {
               const btn = document.getElementById('theme-toggle');
-              // select any element that has both data-light and data-dark
               const themedEls = document.querySelectorAll('[data-light][data-dark]');
           
               btn.addEventListener('click', () => {
-                // toggle your .dark class on <html>
+                // toggle .dark class
                 const isDark = document.documentElement.classList.toggle('dark');
-                // update button text/aria-label
+                // update button text
                 btn.textContent = isDark ? 'Light mode' : 'Dark mode';
                 btn.setAttribute('aria-label',
                   isDark ? 'Toggle light mode' : 'Toggle dark mode'
                 );
           
-                // swap each element’s image
+                // swap images
                 themedEls.forEach(el => {
                   // if it's an <img>, change src; otherwise, change background-image
                   if (el.tagName.toLowerCase() === 'img') {
@@ -75,10 +69,11 @@
         </div>
       </header>
 
-    <div class="container">
+    <div class="container"> <!-- Where page content goes -->
 
-      <div class="row">
-        <!-- <a href="page1.html" class="box middle">Purchasing</a> -->
+      <div class="row"> <!-- Boxes put side by side -->
+
+        <!-- Left box: purchasing -->
         <a href="purchasing.html" class="box middle picture-link">
           <img
             data-light="handle.png"
@@ -89,6 +84,7 @@
           <span class="overlay-text">Purchasing</span>
         </a>
 
+        <!-- Right box: tracking progress -->
         <a href="track_progress.html" class="box middle picture-link">
           <img
             data-light="images/Track Progress.jpg"
@@ -98,20 +94,20 @@
           />
           <span class="overlay-text">Track Progress</span>
         </a>
-        <!-- <a href="index2.html" class="box middle">Track Progress</a> -->
       </div>
 
+      <!-- Quote -->
       <div class="box bottom">
         <img src="walkhard.svg" alt="True Walk logo" class="box-icon" />
         "Sometimes the smallest step in the right direction ends up being the biggest step of your life"
       </div>
 
+      <!-- Our Mission -->
       <div class="box mission">
         <a href="page1.html" class="box mission">Our Mission</a>
       </div>
 
   </div>
   </body>
-<!-- </body> -->
 </div>
 </html>

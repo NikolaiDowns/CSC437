@@ -6,26 +6,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>True Walk</title>
   <link rel="stylesheet" href="styles.css" />
-<script type="module" src="history/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script type="module" src="history/chart.js"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"
     rel="stylesheet">
 </head>
-<div class="theme"> <!-- Dark/Light mode -->
+<!-- <input id="theme-switch" type="checkbox" /> -->
+<div class="theme">
 <body>
 
   <body>
     
-      <header class="toolbar"> <!-- Header -->
-
-        <div class="toolbar-left"> <!-- Logo & Name  -->
+      <header class="toolbar">
+        <div class="toolbar-left">
           <img src="walkhard.svg" alt="True Walk logo" class="box-icon-small" />
+          <!-- <span
+            class="box-icon-small logo-mask"
+            role="img"
+            aria-label="True Walk logo"
+          ></span> -->
           TRUE WALK
         </div>
 
-        <div class="toolbar-right"> <!-- Header links/options -->
+        <div class="toolbar-right">
 
           <a href="signup.html">Sign Up</a>
           <a href="login.html">Login</a>
@@ -33,27 +38,28 @@
           <a href="contact.html">Contact Us</a>
           <a href="about.html">About Us</a>
           <a href="options.html">Options</a>
+          <!-- <label for="theme-toggle" class="theme-label">Dark mode</label> -->
           
-          <!-- Dark/Light mode button -->
           <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-            Dark mode <!-- Default is light mode -->
+            Dark mode
           </button>
           <script>
-            // querySelectorAll find images
+            // wait for the DOM so querySelectorAll actually finds your images
             document.addEventListener('DOMContentLoaded', () => {
               const btn = document.getElementById('theme-toggle');
+              // select any element that has both data-light and data-dark
               const themedEls = document.querySelectorAll('[data-light][data-dark]');
           
               btn.addEventListener('click', () => {
-                // toggle .dark class
+                // toggle your .dark class on <html>
                 const isDark = document.documentElement.classList.toggle('dark');
-                // update button text
+                // update button text/aria-label
                 btn.textContent = isDark ? 'Light mode' : 'Dark mode';
                 btn.setAttribute('aria-label',
                   isDark ? 'Toggle light mode' : 'Toggle dark mode'
                 );
           
-                // swap images
+                // swap each element’s image
                 themedEls.forEach(el => {
                   // if it's an <img>, change src; otherwise, change background-image
                   if (el.tagName.toLowerCase() === 'img') {
@@ -74,14 +80,12 @@
 
       <div class="row">
         <div class="box graph">
-            <!-- Chart for daily left handle use -->
             <bar-chart
               data="[0,0,20,35,50,65,45,30,25,10,5,15,30,50,75,90,60,40,20,10,5,15,30,45]"
               unit="lbs"
             ></bar-chart>
           </div>
 
-            <!-- Daily use right handle -->
           <div class="box graph">
             <bar-chart
               data="[0,0,20,35,50,65,45,30,25,10,5,15,30,50,75,90,60,40,20,10,5,15,30,45]"
@@ -91,7 +95,6 @@
       </div>
 
       <div class="row">
-        <!-- Chart for weekly left handle use -->
         <div class="box graph">
             <bar-chart
               variant="week"
@@ -100,7 +103,6 @@
             ></bar-chart>
           </div>
 
-          <!-- Weekly use right handle -->
           <div class="box graph">
             <bar-chart
               variant="week"
@@ -111,7 +113,6 @@
       </div>
 
       <div class="row">
-        <!-- Chart for monthly left handle use -->
         <div class="box graph">
             <bar-chart
                 variant="month"
@@ -120,7 +121,6 @@
             ></bar-chart>
           </div>
 
-          <!-- Chart for monthly right handle use -->
           <div class="box graph">
             <bar-chart
                 variant="month"
@@ -132,7 +132,6 @@
 
       <div class="row">
         <div class="box graph">
-            <!-- Chart for yearly left handle use -->
             <bar-chart
                 variant="year"
                 data="[5,10,8,12,20,18,25,22,15,10,6,4]"
@@ -142,7 +141,6 @@
 
           <div class="box graph">
             <div class="overlay">This Year's Walker Usage</div>
-            <!-- Chart for yearly right handle use -->
             <bar-chart
                 variant="year"
                 data="[5,10,8,12,20,18,25,22,15,10,6,4]"

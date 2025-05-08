@@ -1,4 +1,3 @@
-// history/chart.js
 import { LitElement, html, css } from 'https://unpkg.com/lit@2.7.2/index.js?module';
 
 class BarChart extends LitElement {
@@ -25,7 +24,7 @@ class BarChart extends LitElement {
       this.variant = this.getAttribute('variant');
     }
 
-    // parse data
+    // get data
     const raw = this.getAttribute('data');
     if (raw) {
       try {
@@ -34,7 +33,7 @@ class BarChart extends LitElement {
       } catch {}
     }
 
-    // parse max & unit
+    // get graphs max and units
     if (this.hasAttribute('max')) {
       const m = Number(this.getAttribute('max'));
       if (!isNaN(m)) this.max = m;
@@ -43,7 +42,7 @@ class BarChart extends LitElement {
       this.unit = this.getAttribute('unit');
     }
 
-    // parse custom labels
+    // get custom labels
     const labRaw = this.getAttribute('labels');
     if (labRaw) {
       try {
@@ -54,20 +53,29 @@ class BarChart extends LitElement {
       } catch {}
     }
 
-    // default labels
+    // default labels (x-axis is different for displaying day,week,month,year)
     if (!this._labels.length) {
-      if (this.variant === 'week' && this.data.length === 7) {
+      if (this.variant === 'week' && this.data.length === 7) 
+      {
         this._labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-      } else if (this.data.length === 24) {
+      } 
+      else if (this.data.length === 24) 
+      {
         this._labels = Array.from({length:24},(_,i)=> {
           const h = i%12===0?12:i%12, ap=i<12?'am':'pm';
           return `${h} ${ap}`;
         });
-      } else if (this.variant === 'month' && this.data.length === 31) {
+      } 
+      else if (this.variant === 'month' && this.data.length === 31) 
+      {
         this._labels = Array.from({length:31},(_,i) => String(i+1));
-      } else if (this.variant === 'year' && this.data.length === 12) {
+      }
+      else if (this.variant === 'year' && this.data.length === 12)
+      {
         this._labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      } else {
+      }
+      else 
+      {
         this._labels = this.data.map((_,i) => String(i));
       }
     }
