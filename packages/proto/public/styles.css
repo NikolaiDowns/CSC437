@@ -67,7 +67,6 @@ header.toolbar {
     background: var(--color-background);
   }
   
-  /* make every box fill up to its max-width */
   .box {
     background: var(--color-box);
     border-radius: var(--box-radius);
@@ -78,11 +77,59 @@ header.toolbar {
     text-align: center;
     color: var(--color-primary);
   
-    width: 100%;            /* fill parent (the container’s width, which is 100%) */
-    max-width: var(--box-max);/* override per box via a CSS variable */
-  }
+    width: 100%;            
+  } 
+
+  .box {
+    background: var(--color-box);
+    border-radius: var(--box-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    text-align: center;
+    color: var(--color-primary);
   
-  /* now give each box its own --box-max */
+    width: 100%;
+    max-width: var(--box-max);
+    /* new: make each .box square */
+    aspect-ratio: 1 / 1;
+  }
+
+  .graph {
+    --box-max: 47%;
+    aspect-ratio: 1/1;
+    height: auto;
+    /* add these: */
+    /* border-radius: var(--box-radius, 20px);
+    overflow: hidden; */
+  }
+
+  /* .graph {
+    position: relative; 
+    --box-max: 47%;
+    aspect-ratio: 1/1;
+    height: auto;
+    overflow: hidden;
+  } */
+  
+  /* Absolutely fill the box with the chart */
+  /* .graph > bar-chart {
+    position: absolute;
+    inset: 0;
+  } */
+  
+  /* Overlay text in the top-left corner */
+  .box.graph .overlay {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--label-color, #333);
+    pointer-events: none;
+    z-index: 1;
+  }
   
   .top {
     width: auto;
@@ -106,6 +153,8 @@ header.toolbar {
     --box-max: 60%;
     font-size: 1.5rem;
     padding: 1rem 1.75rem;
+    aspect-ratio: 7 / 1;
+    height: auto;
   }
 
   .mission {

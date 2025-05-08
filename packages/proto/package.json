@@ -10,6 +10,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "http-server": "^14.1.1"
+    "@calpoly/mustang": "^1.0.15",
+    "http-server": "^14.1.1",
+    "lit": "^3.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
   }
 }
