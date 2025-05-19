@@ -2,12 +2,9 @@
 
 import type { Mongoose } from "mongoose";
 
-/**
- * Lazily connect to MongoDB (Atlas or local) only when called.
- * Nothing is executed at module load time.
- */
+
 export function connect(dbname: string): Promise<Mongoose> {
-  console.log("⚙️ [mongo] initializing connection…");
+  console.log("[mongo] initializing connection…");
 
   // Load dependencies only when connecting
   const mongoose = require("mongoose");

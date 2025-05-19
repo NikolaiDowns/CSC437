@@ -1,0 +1,17 @@
+# Node modules & build outputs
+node_modules/
+packages/**/node_modules/
+
+# TypeScript / esbuild outputs
+dist/
+packages/**/dist/
+
+# VSCode workspace settings
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*

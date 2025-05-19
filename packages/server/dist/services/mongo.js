@@ -22,7 +22,7 @@ __export(mongo_exports, {
 });
 module.exports = __toCommonJS(mongo_exports);
 function connect(dbname) {
-  console.log("\u2699\uFE0F [mongo] initializing connection\u2026");
+  console.log("[mongo] initializing connection\u2026");
   const mongoose = require("mongoose");
   const dotenv = require("dotenv");
   dotenv.config();
