@@ -1,0 +1,14 @@
+:root {
+    --color-primary:   #182d3b; /* WalkHard Blue */
+    --color-secondary: #0353A4; /* Sapphire Blue */
+    --color-accent:    #006DAA; /* Sky Blue */
+    --color-box:       #B9D6F2; /* Columbia Blue */
+
+    --color-background: whitesmoke; /* Off White */
+
+    --box-bg: var(--color-box);
+    --box-radius: 20px;
+    --gap: 20px;
+    --box-height: 150px;
+  }
+  
