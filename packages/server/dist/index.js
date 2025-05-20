@@ -24,9 +24,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 var import_express = __toESM(require("express"));
 var import_mongo = require("./services/mongo");
 var import_user_svc = __toESM(require("./services/user-svc"));
+var import_users = __toESM(require("./routes/users"));
 const app = (0, import_express.default)();
 const port = Number(process.env.PORT) || 3e3;
 app.use(import_express.default.static(process.env.STATIC || "public"));
+app.use(import_express.default.json());
+app.use("/api/users", import_users.default);
 app.get("/hello", (_req, res) => res.send("Hello, World"));
 app.get("/user/:id", async (req, res) => {
   const user = await import_user_svc.default.get(req.params.id);

@@ -76,4 +76,27 @@ function get(id: string): Promise<User | null> {
   return UserModel.findOne({ id }).exec();
 }
 
-export default { index, get };
+// Create
+function create(u: User): Promise<User> {
+  const doc = new UserModel(u);
+  return doc.save();
+}
+
+// Update
+function update(id: string, u: User): Promise<User> {
+  return UserModel.findOneAndUpdate({ id }, u, { new: true })
+    .then((updated) => {
+      if (!updated) throw `${id} not found`;
+      return updated;
+    });
+}
+
+// Remove
+function remove(id: string): Promise<void> {
+  return UserModel.findOneAndDelete({ id })
+    .then((del) => {
+      if (!del) throw `${id} not found`;
+    });
+}
+
+export default { index, get, create, update, remove };

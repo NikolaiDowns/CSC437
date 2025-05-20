@@ -1,13 +1,15 @@
 // src/index.ts
 import express from "express";
 import { connect } from "./services/mongo";
-// swap out the traveler service for your user service
 import Users from "./services/user-svc";
+import users from "./routes/users";
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
 
 app.use(express.static(process.env.STATIC || "public"));
+app.use(express.json());
+app.use("/api/users", users);
 
 app.get("/hello", (_req, res) => res.send("Hello, World"));
 

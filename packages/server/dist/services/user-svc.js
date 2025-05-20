@@ -90,4 +90,19 @@ function index() {
 function get(id) {
   return UserModel.findOne({ id }).exec();
 }
-var user_svc_default = { index, get };
+function create(u) {
+  const doc = new UserModel(u);
+  return doc.save();
+}
+function update(id, u) {
+  return UserModel.findOneAndUpdate({ id }, u, { new: true }).then((updated) => {
+    if (!updated) throw `${id} not found`;
+    return updated;
+  });
+}
+function remove(id) {
+  return UserModel.findOneAndDelete({ id }).then((del) => {
+    if (!del) throw `${id} not found`;
+  });
+}
+var user_svc_default = { index, get, create, update, remove };
