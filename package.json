@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/NikolaiDowns/CSC437/issues"
   },
-  "homepage": "https://github.com/NikolaiDowns/CSC437#readme"
+  "homepage": "https://github.com/NikolaiDowns/CSC437#readme",
+  "workspaces": [
+    "packages/server",
+    "packages/proto"
+  ]
 }

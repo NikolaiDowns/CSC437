@@ -1,113 +1,101 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>True Walk</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Main stylesheet -->
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link
     href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"
-    rel="stylesheet">
+    rel="stylesheet"
+  />
+  <script type="module" crossorigin src="/assets/main-wWoZYWxG.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="stylesheet" crossorigin href="/assets/styles-CmYVJA-d.css">
 </head>
-<div class="theme"> <!-- Dark/Light mode -->
-<body>
 
-  <body>
-    
-      <header class="toolbar"> <!-- Header -->
+<body class="theme">
+  <mu-auth provides="truewalk:auth">
+    <header class="toolbar">
+      <div class="toolbar-left">
+        <img src="/assets/walkhard-BLCn3eS0.svg" alt="True Walk logo" class="box-icon-small" />
+        TRUE WALK
+      </div>
+      <div class="toolbar-right">
+        <a href="signup.html" id="signup-link">Sign Up</a>
+        <a href="login.html" id="login-link">Login</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="about.html">About Us</a>
+        <a href="options.html">Options</a>
 
-        <div class="toolbar-left"> <!-- Logo & Name  -->
-          <img src="walkhard.svg" alt="True Walk logo" class="box-icon-small" />
-          TRUE WALK
-        </div>
+        <!-- Dark/Light toggle -->
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+          Dark mode
+        </button>
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const btn = document.getElementById("theme-toggle");
+            const themedEls = document.querySelectorAll("[data-light][data-dark]");
 
-        <div class="toolbar-right"> <!-- Header links/options -->
-
-          <a href="signup.html">Sign Up</a>
-          <a href="login.html">Login</a>
-          <a href="pricing.html">Pricing</a>
-          <a href="contact.html">Contact Us</a>
-          <a href="about.html">About Us</a>
-          <a href="options.html">Options</a>
-          
-          <!-- Dark/Light mode button -->
-          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-            Dark mode <!-- Default is light mode -->
-          </button>
-          <script>
-            // querySelectorAll find images
-            document.addEventListener('DOMContentLoaded', () => {
-              const btn = document.getElementById('theme-toggle');
-              const themedEls = document.querySelectorAll('[data-light][data-dark]');
-          
-              btn.addEventListener('click', () => {
-                // toggle .dark class
-                const isDark = document.documentElement.classList.toggle('dark');
-                // update button text
-                btn.textContent = isDark ? 'Light mode' : 'Dark mode';
-                btn.setAttribute('aria-label',
-                  isDark ? 'Toggle light mode' : 'Toggle dark mode'
-                );
-          
-                // swap images
-                themedEls.forEach(el => {
-                  // if it's an <img>, change src; otherwise, change background-image
-                  if (el.tagName.toLowerCase() === 'img') {
-                    el.src = isDark ? el.dataset.dark : el.dataset.light;
-                  } else {
-                    el.style.backgroundImage = 
-                      `url(${isDark ? el.dataset.dark : el.dataset.light})`;
-                  }
-                });
+            btn.addEventListener("click", () => {
+              const isDark = document.documentElement.classList.toggle("dark");
+              btn.textContent = isDark ? "Light mode" : "Dark mode";
+              btn.setAttribute("aria-label",
+                isDark ? "Toggle light mode" : "Toggle dark mode"
+              );
+              themedEls.forEach((el) => {
+                if (el.tagName.toLowerCase() === "img") {
+                  el.src = isDark ? el.dataset.dark : el.dataset.light;
+                } else {
+                  el.style.backgroundImage =
+                    `url(${isDark ? el.dataset.dark : el.dataset.light})`;
+                }
               });
             });
-          </script>
+          });
+        </script>
+      </div>
+    </header>
 
-        </div>
-      </header>
-
-    <div class="container"> <!-- Where page content goes -->
-
-      <div class="row"> <!-- Boxes put side by side -->
-
-        <!-- Left box: purchasing -->
+    <div class="container">
+      <div class="row">
         <a href="purchasing.html" class="box middle picture-link">
           <img
-            data-light="handle.png"
+            data-light="images/handle.png"
             data-dark="images/handle_inv3.jpg"
-            src="handle.png" 
-            alt="Purchasing" 
+            src="/assets/handle-BelilC66.png"
+            alt="Purchasing"
           />
           <span class="overlay-text">Purchasing</span>
         </a>
-
-        <!-- Right box: tracking progress -->
         <a href="track_progress.html" class="box middle picture-link">
           <img
             data-light="images/Track Progress.jpg"
             data-dark="images/Track Progress_inv3.jpg"
-            src="images/Track Progress.jpg" 
-            alt="Purchasing" 
+            src="/assets/Track%20Progress-07ashNXp.jpg"
+            alt="Track Progress"
           />
           <span class="overlay-text">Track Progress</span>
         </a>
       </div>
 
-      <!-- Quote -->
       <div class="box bottom">
-        <img src="walkhard.svg" alt="True Walk logo" class="box-icon" />
+        <img src="/assets/walkhard-BLCn3eS0.svg" alt="True Walk logo" class="box-icon" />
         "Sometimes the smallest step in the right direction ends up being the biggest step of your life"
       </div>
 
-      <!-- Our Mission -->
       <div class="box mission">
         <a href="page1.html" class="box mission">Our Mission</a>
       </div>
+    </div>
+  </mu-auth>
 
-  </div>
-  </body>
-</div>
+  <!-- Mustang from CDN + header auth logic -->
+</body>
 </html>

@@ -1,15 +1,17 @@
-import { resolve } from 'path'
-import { defineConfig } from 'vite'
+import path from "path";
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  root: '.',
+  root: ".",
   build: {
-    outDir: 'dist',
+    outDir: "dist",
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        track: resolve(__dirname, 'track_progress.html'),
-      }
-    }
+        main:  path.resolve(__dirname, "index.html"),
+        track: path.resolve(__dirname, "track_progress.html"),
+        login:   path.resolve(__dirname, "login.html"),
+        signup: path.resolve(__dirname, "signup.html"),
+      },
+    },
   }
-})
+});

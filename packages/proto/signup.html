@@ -1,0 +1,46 @@
+<!-- packages/proto/signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>True Walk – Sign Up</title>
+
+  <!-- Bring in Mustang and login-form -->
+  <script type="module">
+    import { define, Auth } from "https://cdn.jsdelivr.net/npm/@calpoly/mustang/dist/mustang.js";
+    import { LoginFormElement } from "./src/auth/login-form.js";
+
+    // Register provider and form
+    define({
+      "mu-auth":   Auth.Provider,
+      "login-form": LoginFormElement
+    });
+  </script>
+
+  <!-- CSS, fonts, etc. -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <mu-auth provides="truewalk:auth">
+    <h2>Create an Account</h2>
+    <main class="card">
+      <!-- Point to login‐form at /auth/register -->
+      <login-form api="/auth/register" redirect="/">
+        <label>
+          <span>Username:</span>
+          <input name="username" autocomplete="off" />
+        </label>
+        <label>
+          <span>Password:</span>
+          <input type="password" name="password" />
+        </label>
+      </login-form>
+    </main>
+    <p>
+      Already have an account? 
+      <a href="login.html">Log in instead</a>
+    </p>
+  </mu-auth>
+</body>
+</html>
