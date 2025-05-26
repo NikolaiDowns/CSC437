@@ -52,7 +52,10 @@ const UserSchema = new Schema<User>(
     },
     usage: {
       type: [Number],
-      default: [],
+      default: () => Array.from(
+        { length: 156 },
+        () => Math.floor(Math.random() * 71)
+      )
     },
     isDeleted: {
       type: Boolean,

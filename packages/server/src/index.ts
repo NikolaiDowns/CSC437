@@ -1,44 +1,69 @@
 // src/index.ts
-import path from "path";
-import express from "express";
-import { connect } from "./services/mongo";
-import Users from "./services/user-svc";
-import users from "./routes/users";
-import auth, { authenticateUser } from "./routes/auth";
+import express from 'express';
+import path from 'path';
+import { connect } from './services/mongo';
+import users from './routes/users';
+import auth, { authenticateUser } from './routes/auth';
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
 
-app.use(express.static(process.env.STATIC || path.join(__dirname, "../public")));
-
+// serve your front-end assets
 app.use(
-  "/node_modules",
-  express.static(path.join(__dirname, "../node_modules"))
+  express.static(process.env.STATIC || path.join(__dirname, '../public'))
+);
+app.use(
+  '/node_modules',
+  express.static(path.join(__dirname, '../node_modules'))
 );
 
 app.use(express.json());
 
-app.use("/auth", auth);
+// auth endpoints (login/register) now live under /api/auth
+app.use('/api/auth', auth);
 
-app.use("/api/users", authenticateUser, users);
+// protected user endpoints
+app.use('/api/users', authenticateUser, users);
 
-app.use(
-  express.static(path.join(__dirname, "../../proto/dist"))
-);
+// serve your proto build (track_progress, etc.)
+app.use(express.static(path.join(__dirname, '../../proto/dist')));
 
-app.get("/hello", (_req, res) => res.send("Hello, World"));
+// simple test
+app.get('/hello', (_req, res) => res.send('Hello, World'));
 
-app.get("/user/:id", async (req, res) => {
+// lookup by ID
+app.get('/user/:id', async (req, res) => {
+  const { default: Users } = await import('./services/user-svc');
   const user = await Users.get(req.params.id);
   return user ? res.json(user) : res.status(404).end();
 });
 
+app.listen(port, () => {
+  console.log(`🔊 Listening on port ${port}`);
+});
+
+// connect('Truewalk0')
+//   .then(() => {
+//     app.listen(port, () => {
+//       console.log(`Server listening on http://localhost:${port}`);
+//     });
+//   })
+//   .catch((err) => {
+//     console.error('MongoDB connection failed:', err);
+//     process.exit(1);
+//   });
+
 connect("Truewalk0")
   .then(() => {
-    app.listen(port, () =>
-      console.log(`Server listening at http://localhost:${port}`)
-    );
+    console.log("🟢 MongoDB connected");
+    console.log("🟢 Starting server…");
+    // bind on 0.0.0.0 so outside requests are accepted
+    const host = process.env.HOST || "0.0.0.0";
+    app.listen(port, host, () => {
+      console.log(`🟢 Server listening on http://${host}:${port}`);
+    });
   })
   .catch((err) => {
-    console.error("Mongo connection failed:", err);
+    console.error('MongoDB connection failed:', err);
+    process.exit(1);
   });

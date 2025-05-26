@@ -21,35 +21,41 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var import_path = __toESM(require("path"));
 var import_express = __toESM(require("express"));
+var import_path = __toESM(require("path"));
 var import_mongo = require("./services/mongo");
-var import_user_svc = __toESM(require("./services/user-svc"));
 var import_users = __toESM(require("./routes/users"));
 var import_auth = __toESM(require("./routes/auth"));
 const app = (0, import_express.default)();
 const port = Number(process.env.PORT) || 3e3;
-app.use(import_express.default.static(process.env.STATIC || import_path.default.join(__dirname, "../public")));
+app.use(
+  import_express.default.static(process.env.STATIC || import_path.default.join(__dirname, "../public"))
+);
 app.use(
   "/node_modules",
   import_express.default.static(import_path.default.join(__dirname, "../node_modules"))
 );
 app.use(import_express.default.json());
-app.use("/auth", import_auth.default);
+app.use("/api/auth", import_auth.default);
 app.use("/api/users", import_auth.authenticateUser, import_users.default);
-app.use(
-  import_express.default.static(import_path.default.join(__dirname, "../../proto/dist"))
-);
+app.use(import_express.default.static(import_path.default.join(__dirname, "../../proto/dist")));
 app.get("/hello", (_req, res) => res.send("Hello, World"));
 app.get("/user/:id", async (req, res) => {
-  const user = await import_user_svc.default.get(req.params.id);
+  const { default: Users } = await import("./services/user-svc");
+  const user = await Users.get(req.params.id);
   return user ? res.json(user) : res.status(404).end();
 });
+app.listen(port, () => {
+  console.log(`\u{1F50A} Listening on port ${port}`);
+});
 (0, import_mongo.connect)("Truewalk0").then(() => {
-  app.listen(
-    port,
-    () => console.log(`Server listening at http://localhost:${port}`)
-  );
+  console.log("\u{1F7E2} MongoDB connected");
+  console.log("\u{1F7E2} Starting server\u2026");
+  const host = process.env.HOST || "0.0.0.0";
+  app.listen(port, host, () => {
+    console.log(`\u{1F7E2} Server listening on http://${host}:${port}`);
+  });
 }).catch((err) => {
-  console.error("Mongo connection failed:", err);
+  console.error("MongoDB connection failed:", err);
+  process.exit(1);
 });

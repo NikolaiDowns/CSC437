@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { User } from "../models/user";
 import Users from "../services/user-svc";
+import { authenticateUser } from "./auth";
 
 const router = express.Router();
 
@@ -37,6 +38,23 @@ router.delete("/:id", (req, res) =>
   Users.remove(req.params.id)
     .then(() => res.status(204).end())
     .catch((err) => res.status(404).send(err))
+);
+
+router.get(
+  "/me",
+  authenticateUser,
+  async (req: Request, res: Response) => {
+    try {
+      const username = (req as any).userId as string;
+      const user     = await Users.get(username);
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+      res.json(user);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  }
 );
 
 export default router;
