@@ -1,0 +1,44 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "experimentalDecorators": true,
+        "useDefineForClassFields": false,
+        "lib": [
+            "es2020",
+            "dom",
+            "dom.iterable"
+        ],
+        "skipLibCheck": true,
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "allowSyntheticDefaultImports": true,
+        "resolvePackageJsonExports": true,
+        "resolvePackageJsonImports": true,
+        "preserveConstEnums": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+        "strictBuiltinIteratorReturn": true,
+        "alwaysStrict": true,
+        "useUnknownInCatchVariables": true
+    },
+    "files": [
+        "./src/bar-chart.ts",
+        "./src/chart-list.ts",
+        "./src/auth/login-form.ts"
+    ],
+    "include": [
+        "src"
+    ]
+}

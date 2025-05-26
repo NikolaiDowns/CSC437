@@ -45,9 +45,6 @@ app.get("/user/:id", async (req, res) => {
   const user = await Users.get(req.params.id);
   return user ? res.json(user) : res.status(404).end();
 });
-app.listen(port, () => {
-  console.log(`\u{1F50A} Listening on port ${port}`);
-});
 (0, import_mongo.connect)("Truewalk0").then(() => {
   console.log("\u{1F7E2} MongoDB connected");
   console.log("\u{1F7E2} Starting server\u2026");
@@ -56,6 +53,6 @@ app.listen(port, () => {
     console.log(`\u{1F7E2} Server listening on http://${host}:${port}`);
   });
 }).catch((err) => {
-  console.error("MongoDB connection failed:", err);
+  console.error("\u26A0\uFE0F MongoDB connection failed:", err);
   process.exit(1);
 });
