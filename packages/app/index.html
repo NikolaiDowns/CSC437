@@ -1,0 +1,43 @@
+<!-- packages/app/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>True Walk</title>
+
+    <!-- Main stylesheet from public/styles/ -->
+    <link rel="stylesheet" href="/styles/styles.css" />
+
+    <!-- Google Fonts (exactly as in your proto) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="theme">
+    <!-- 1) Wrap everything in mu-auth so Mustang can manage auth state -->
+    <mu-auth provides="truewalk:auth">
+      <!-- 2) Your custom header component (handles Login/Logout swapping) -->
+      <app-header></app-header>
+
+      <!-- 3) Mustang’s history & switch (unchanged from before) -->
+      <mu-history provides="truewalk:history">
+        <mu-switch></mu-switch>
+      </mu-history>
+    </mu-auth>
+
+    <!-- 4) Load your main TS bundle (Vite will compile this) -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

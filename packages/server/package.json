@@ -10,6 +10,8 @@
     "clean": "rm -rf dist",
     "start:node": "node dist/index.js",
     "start:proto": "cross-env STATIC=../proto/dist npm run start",
+    "start:api": "cross-env STATIC=./public npm run start",
+    "start:app": "cross-env STATIC=../app/dist npm run start",
     "check": "tsc --noEmit"
   },
   "dependencies": {

@@ -1,0 +1,75 @@
+<!-- packages/app/public/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Login</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    form { max-width: 320px; margin: auto; display: grid; gap: 1rem; }
+    label { display: flex; flex-direction: column; }
+    button { padding: 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <h2 style="text-align:center;">User Login</h2>
+
+  <form id="login-form">
+    <label>
+      Username:
+      <input type="text" id="username" name="username" autocomplete="off" required />
+    </label>
+    <label>
+      Password:
+      <input type="password" id="password" name="password" autocomplete="new-password" required />
+    </label>
+    <button type="submit">Login</button>
+  </form>
+
+  <p style="text-align:center;">
+    Or <a href="signup.html">sign up as a new user</a>.
+  </p>
+
+  <script>
+    (function() {
+      const form     = document.getElementById('login-form');
+      const userIn   = document.getElementById('username');
+      const passIn   = document.getElementById('password');
+      // pick up ?redirect=… (defaults back to track_progress.html)
+      const params   = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect') || 'track_progress.html';
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = userIn.value.trim();
+        const password = passIn.value;
+        if (!username || !password) return alert('Fill both fields');
+
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            return alert('Login failed: ' + errText);
+          }
+
+          const { token } = await res.json();
+          localStorage.setItem('token', token);
+          window.location.href = redirect;
+
+        } catch (err) {
+          console.error(err);
+          alert('Network error');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

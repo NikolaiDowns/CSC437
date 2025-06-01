@@ -1,10 +1,11 @@
+// packages/app/src/track-progress.ts
 import './bar-chart.js';
 
 interface User {
   usage: number[];
 }
 
-const SIZES    = [24, 24, 7, 7, 31, 31, 12, 12];
+const SIZES    = [24,24,7,7,31,31,12,12];
 const VARIANTS = ['day','day','week','week','month','month','year','year'] as const;
 const IDS      = [
   'daily-left','daily-right',
@@ -17,24 +18,25 @@ async function boot() {
   const token = localStorage.getItem('token');
 
   if (!token) {
-    // No redirect here—just exit early.
-    console.log('No token; skipping data fetch.');
+    // We are not redirecting to login here—just bail out silently.
+    console.log('No token; skipping fetch.');
     return;
   }
 
-  // If token exists, try fetching your user data
+  // If token exists, attempt to fetch /api/auth/me
   const res = await fetch('/api/auth/me', {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   if (!res.ok) {
-    console.warn('Failed to fetch /api/auth/me; clearing token.');
-    // Optionally: localStorage.removeItem('token');
+    console.warn('Failed to fetch /api/auth/me');
+    // Instead of redirecting, maybe clear token or bail out:
+    // localStorage.removeItem('token');
     return;
   }
 
   const user: User = await res.json();
 
-  // Populate each <bar-chart> with the right slice of user.usage
+  // Now populate the bar-chart Web Components
   let offset = 0;
   for (let i = 0; i < SIZES.length; i++) {
     const count = SIZES[i];

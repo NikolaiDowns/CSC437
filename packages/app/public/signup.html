@@ -1,0 +1,87 @@
+<!-- public/signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Create an Account</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    form { max-width: 320px; margin: auto; display: grid; gap: 1rem; }
+    label { display: flex; flex-direction: column; }
+    button { padding: 0.5rem; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+
+  <h2 style="text-align:center;">Create an Account</h2>
+
+  <form id="signup-form">
+    <label>
+      Username:
+      <input type="text" id="username" name="username" autocomplete="username" required />
+    </label>
+    <label>
+      Password:
+      <input type="password" id="password" name="password" autocomplete="new-password" required />
+    </label>
+    <button type="submit">Sign Up</button>
+    <p class="error" id="error-msg" style="display:none;"></p>
+  </form>
+
+  <p style="text-align:center;">
+    Already have an account? <a href="login.html">Log in instead</a>.
+  </p>
+
+  <script>
+    (function() {
+      const form     = document.getElementById('signup-form');
+      const userIn   = document.getElementById('username');
+      const passIn   = document.getElementById('password');
+      const errMsg   = document.getElementById('error-msg');
+      // honor ?redirect=… or default to track_progress
+      const params   = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect') || 'track_progress.html';
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errMsg.style.display = 'none';
+
+        const username = userIn.value.trim();
+        const password = passIn.value;
+        if (!username || !password) {
+          errMsg.textContent = 'Please fill both fields';
+          errMsg.style.display = '';
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+
+          if (!res.ok) {
+            const body = await res.json().catch(() => null);
+            errMsg.textContent = body?.error || 'Registration failed';
+            errMsg.style.display = '';
+            return;
+          }
+
+          const { token } = await res.json();
+          // store JWT and redirect
+          localStorage.setItem('token', token);
+          window.location.href = redirect;
+
+        } catch (err) {
+          console.error(err);
+          errMsg.textContent = 'Network error';
+          errMsg.style.display = '';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

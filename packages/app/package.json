@@ -1,0 +1,22 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "clean:components": "rimraf src/components/*.js src/views/*.js",
+    "predev": "npm run clean:components",
+    "prebuild": "npm run clean:components",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@calpoly/mustang": "^1.0.15",
+    "lit": "^3.3.0"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  }
+}
