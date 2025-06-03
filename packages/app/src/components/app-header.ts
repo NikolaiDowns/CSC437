@@ -12,7 +12,7 @@ export class AppHeader extends LitElement {
   @state()
   private username: string | null = null;
 
-  // 2) We’ll still wire up an Observer in case Mustang publishes an auth change
+  // 2) We’ll still wire up an Observer<any> in case Mustang publishes an auth change
   //    (e.g., right after login). That way the header updates immediately.
   private authObserver!: Observer<any>;
 
@@ -71,8 +71,8 @@ export class AppHeader extends LitElement {
   connectedCallback() {
     super.connectedCallback();
 
-    // 4) First, check localStorage right now. If we have a saved username (and token),
-    //    assume the user is already authenticated and show “Hello, <username>” immediately.
+    // 4) First, check localStorage immediately. If we have a saved username (and token),
+    //    assume the user is already authenticated and show “Hello, <username>” right away.
     const storedUsername = localStorage.getItem("username");
     const storedToken = localStorage.getItem("token");
     if (storedUsername && storedToken) {
@@ -82,7 +82,7 @@ export class AppHeader extends LitElement {
 
     // 5) Also observe Mustang’s Auth context. If we just finished a login flow via
     //    Mustang’s Events.relay(["auth/signin", token]), this callback will update our state.
-    //    **But we only override when authState.user.authenticated === true**. We remove the
+    //    **Only override when authState.user.authenticated === true**. We remove the
     //    else‐branch that would wipe out our localStorage‐driven state.
     this.authObserver.observe((authState: any) => {
       if (authState.user?.authenticated) {
@@ -108,14 +108,11 @@ export class AppHeader extends LitElement {
   }
 
   // 8) Signal Mustang’s Auth to sign out, then clear localStorage + reload
-  private doSignOut() {
-    // Mustang’s Auth.Provider is watching for “auth/signout” events. This triggers it.
-    Events.relay(
-      new CustomEvent("auth:message", {
-        detail: ["auth/signout"],
-      }),
-      "auth:message"
-    );
+  //    NOTE: We now accept the click event (e: MouseEvent) so we can pass it to Events.relay(...)
+  private doSignOut(e: MouseEvent) {
+    // Mustang’s Auth.Provider is watching for “auth/signout” events in the "truewalk:auth" context.
+    // The proper way to fire that is to pass the original MouseEvent into Events.relay(...)
+    Events.relay(e, "auth:message", ["auth/signout"]);
 
     // Clear our localStorage so we don’t auto‐login next time.
     localStorage.removeItem("token");
@@ -167,7 +164,10 @@ export class AppHeader extends LitElement {
             ? html`
                 <!-- ===== Logged‐in state ===== -->
                 <span>Hello, ${this.username}</span>
-                <button @click=${this.doSignOut}>Sign Out</button>
+                <!-- Notice we now pass the MouseEvent into doSignOut: -->
+                <button @click=${(e: MouseEvent) => this.doSignOut(e)}>
+                  Sign Out
+                </button>
               `
             : html`
                 <!-- ===== Logged‐out state ===== -->

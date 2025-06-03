@@ -61,6 +61,7 @@
 
           const { token } = await res.json();
           localStorage.setItem('token', token);
+          localStorage.setItem('username', username);
           window.location.href = redirect;
 
         } catch (err) {

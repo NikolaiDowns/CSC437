@@ -26,12 +26,8 @@
   </head>
 
   <body class="theme">
-    <!-- 1) Wrap everything in mu-auth so Mustang can manage auth state -->
-    <mu-auth provides="truewalk:auth">
-      <!-- 2) Your custom header component (handles Login/Logout swapping) -->
+    <mu-auth provides="truewalk:auth" style="display: contents">
       <app-header></app-header>
-
-      <!-- 3) Mustang’s history & switch (unchanged from before) -->
       <mu-history provides="truewalk:history">
         <mu-switch></mu-switch>
       </mu-history>
