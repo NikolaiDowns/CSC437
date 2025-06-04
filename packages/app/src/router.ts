@@ -3,6 +3,7 @@
 import { html, TemplateResult } from "lit";
 import "./views/home-view";
 import "./views/track-progress-view";
+import "./views/share-progress-view";
 
 export interface AppRoute {
   path: string;
@@ -43,6 +44,13 @@ export const routes: AppRoute[] = [
     view: () => {
       console.log("Rendering /app/track (protected)");
       return requiresAuth(html`<track-progress-view></track-progress-view>`);
+    },
+  },
+  {
+    path: "/app/share",
+    view: () => {
+      console.log("Rendering /app/share (protected)");
+      return requiresAuth(html`<share-progress-view></share-progress-view>`);
     },
   },
 
