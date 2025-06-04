@@ -1,18 +1,19 @@
 // packages/app/src/components/app-header.ts
+
 import { LitElement, html, css } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { Observer, Auth, Events } from "@calpoly/mustang";
 
 @customElement("app-header")
 export class AppHeader extends LitElement {
-  // 1) Keep track of whether the user is authenticated and what their username is
+  // 1) Keep track of whether the user is authenticated, and what their username is
   @state()
   private authenticated = false;
 
   @state()
   private username: string | null = null;
 
-  // 2) We’ll still wire up an Observer<any> in case Mustang publishes an auth change
+  // 2) We’ll wire up an Observer<any> in case Mustang publishes an auth change
   //    (e.g., right after login). That way the header updates immediately.
   private authObserver!: Observer<any>;
 
@@ -71,8 +72,8 @@ export class AppHeader extends LitElement {
   connectedCallback() {
     super.connectedCallback();
 
-    // 4) First, check localStorage immediately. If we have a saved username (and token),
-    //    assume the user is already authenticated and show “Hello, <username>” right away.
+    // 4) First, check localStorage right now. If we have a saved username (and token),
+    //    assume the user is already authenticated and show “Hello, <username>” immediately.
     const storedUsername = localStorage.getItem("username");
     const storedToken = localStorage.getItem("token");
     if (storedUsername && storedToken) {
@@ -94,21 +95,22 @@ export class AppHeader extends LitElement {
   }
 
   // No manual `.disconnect()` because the current Observer API does not expose it.
+  // Let the element go out of scope to end observation.
 
-  // 6) Navigate to login.html with redirect back to this page
+  // 6) Navigate to login.html with a redirect back to this page
   private goLogin() {
     const here = window.location.pathname;
     window.location.href = `/login.html?redirect=${encodeURIComponent(here)}`;
   }
 
-  // 7) Navigate to signup.html with redirect back to this page
+  // 7) Navigate to signup.html with a redirect back to this page
   private goSignup() {
     const here = window.location.pathname;
     window.location.href = `/signup.html?redirect=${encodeURIComponent(here)}`;
   }
 
   // 8) Signal Mustang’s Auth to sign out, then clear localStorage + reload
-  //    NOTE: We now accept the click event (e: MouseEvent) so we can pass it to Events.relay(...)
+  //    NOTE: We accept the MouseEvent so we can pass it to Events.relay(...)
   private doSignOut(e: MouseEvent) {
     // Mustang’s Auth.Provider is watching for “auth/signout” events in the "truewalk:auth" context.
     // The proper way to fire that is to pass the original MouseEvent into Events.relay(...)
@@ -196,3 +198,4 @@ export class AppHeader extends LitElement {
     `;
   }
 }
+

@@ -1,4 +1,5 @@
 // packages/app/src/router.ts
+
 import { html, TemplateResult } from "lit";
 import "./views/home-view";
 import "./views/track-progress-view";
@@ -9,6 +10,10 @@ export interface AppRoute {
   redirect?: string;
 }
 
+/** 
+ * If no token, send user to login.html?redirect=… 
+ * Otherwise, return the original viewTemplate. 
+ */
 function requiresAuth(viewTemplate: TemplateResult): TemplateResult {
   const token = localStorage.getItem("token");
   console.log("Auth check – token exists:", !!token);
@@ -24,21 +29,23 @@ function requiresAuth(viewTemplate: TemplateResult): TemplateResult {
 
 export const routes: AppRoute[] = [
   { path: "/", redirect: "/app" },
+
   {
     path: "/app",
     view: () => {
-      console.log("Rendering /app (protected)");
-      return requiresAuth(html`<home-view></home-view>`);
+      console.log("Rendering /app (unprotected; home-view)");
+      // No auth required for home-view:
+      return html`<home-view></home-view>`;
     },
   },
   {
     path: "/app/track",
     view: () => {
       console.log("Rendering /app/track (protected)");
-      return requiresAuth(
-        html`<track-progress-view></track-progress-view>`
-      );
+      return requiresAuth(html`<track-progress-view></track-progress-view>`);
     },
   },
+
+  // Catch‐all 404:
   { path: "/(.*)", view: () => html`<h1>404 Not Found</h1>` },
 ];

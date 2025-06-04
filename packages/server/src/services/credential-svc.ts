@@ -1,3 +1,5 @@
+// src/services/credential-svc.ts
+
 import bcrypt from "bcryptjs";
 import { Schema, model } from "mongoose";
 import { Credential } from "../models/credential";

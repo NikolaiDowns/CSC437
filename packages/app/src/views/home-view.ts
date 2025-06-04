@@ -1,9 +1,11 @@
-import { LitElement, html } from 'lit';
-import { customElement }    from 'lit/decorators.js';
+// packages/app/src/views/home-view.ts
 
-@customElement('home-view')
+import { html, LitElement } from "lit";
+import { customElement } from "lit/decorators.js";
+
+@customElement("home-view")
 export class HomeView extends LitElement {
-  // opt out of Shadow DOM
+  // Opt out of Shadow DOM so global CSS (styles.css) applies
   protected createRenderRoot() {
     return this;
   }
@@ -34,7 +36,8 @@ export class HomeView extends LitElement {
 
         <div class="box bottom">
           <img src="/icons/walkhard.svg" alt="True Walk logo" class="box-icon" />
-          "Sometimes the smallest step in the right direction ends up being the biggest step of your life"
+          “Sometimes the smallest step in the right direction ends up being the
+          biggest step of your life.”
         </div>
 
         <div class="box mission">

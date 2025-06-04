@@ -1,29 +1,42 @@
 // packages/app/src/main.ts
-import { define, Auth, History, Switch } from "@calpoly/mustang";
+
+import { define, Auth, History, Switch, Store } from "@calpoly/mustang";
 import "./components/app-header";
 import { routes } from "./router";
+
+// ← Import Msg so Store.Provider<… , Msg> compiles
+import { Msg } from "./messages";
+
+// ← Import update & init so we can give them to the store:
+import update from "./update";
+import { init } from "./model";
 
 console.log("main.ts loaded");
 
 define({
-  // 1) Provide Auth context (exactly as in your proto)
+  // 1) Auth context
   "mu-auth": Auth.Provider,
 
-  // 2) Provide History context exactly as before
+  // 2) History context
   "mu-history": History.Provider,
 
-  // 3) Provide Switch, telling it to use both history + auth
+  // 3) MVU store: pass update, init, and the “truewalk:auth” name so the store can pull Auth.User
+  "mu-store": class AppStore extends Store.Provider<typeof init, Msg> {
+    constructor() {
+      super(update, init, "truewalk:auth");
+    }
+  },
+
+  // 4) Switch: pass in our routes array, then history + auth context names
   "mu-switch": class AppSwitch extends Switch.Element {
     constructor() {
-      // Must list 'truewalk:history' *then* 'truewalk:auth'
       super(routes as any, "truewalk:history", "truewalk:auth");
       console.log("AppSwitch constructor called");
     }
     protected createRenderRoot() {
-      // Opt out of Shadow DOM so global CSS applies
-      return this;
+      return this; // render into light DOM so global CSS applies
     }
   },
 });
 
-console.log("Components defined (history + auth)");
+console.log("Components defined (history + auth + store + switch)");

@@ -3,22 +3,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>True Walk</title>
 
     <!-- Main stylesheet from public/styles/ -->
     <link rel="stylesheet" href="/styles/styles.css" />
 
-    <!-- Google Fonts (exactly as in your proto) -->
+    <!-- Google Fonts (Open Sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
-    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"
       rel="stylesheet"
@@ -26,14 +19,22 @@
   </head>
 
   <body class="theme">
-    <mu-auth provides="truewalk:auth" style="display: contents">
-      <app-header></app-header>
-      <mu-history provides="truewalk:history">
-        <mu-switch></mu-switch>
-      </mu-history>
-    </mu-auth>
+    <!-- 1) mu-history always wraps everything to intercept clicks -->
+    <mu-history provides="truewalk:history" style="display: contents">
+      <!-- 2) mu-auth manages login/logout, redirect to /login.html if unauthorized -->
+      <mu-auth provides="truewalk:auth" redirect="/login.html" style="display: contents">
+        <!-- 3) mu-store (our MVU store) must be inside mu-auth so it can access Auth.User -->
+        <mu-store provides="truewalk:model" style="display: contents">
+          <!-- 4) app-header (always visible, shows “Hello, <username>” or login/signup) -->
+          <app-header></app-header>
 
-    <!-- 4) Load your main TS bundle (Vite will compile this) -->
+          <!-- 5) mu-switch: client‐side router, renders <home-view> at /app, <track-progress-view> at /app/track, etc. -->
+          <mu-switch></mu-switch>
+        </mu-store>
+      </mu-auth>
+    </mu-history>
+
+    <!-- 6) Finally, load our main.ts bundle (Vite will produce this in dev or prod). -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -1,3 +1,5 @@
+//server/src/index.ts
+
 import express from 'express';
 import path from 'path';
 import { connect } from './services/mongo';
