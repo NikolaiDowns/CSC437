@@ -40,19 +40,14 @@ app.use(
   (0, import_cors.default)({
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true
   })
 );
 app.use(import_express.default.json());
 app.use("/api/auth", import_auth.default);
 app.use("/api/users", import_auth.authenticateUser, import_users.default);
-app.use(import_express.default.static(import_path.default.join(__dirname, "../../proto/dist")));
 app.get("/hello", (_req, res) => res.send("Hello, World"));
-app.get("/user/:id", async (req, res) => {
-  const { default: Users } = await import("./services/user-svc");
-  const user = await Users.get(req.params.id);
-  return user ? res.json(user) : res.status(404).end();
-});
 (0, import_mongo.connect)("Truewalk0").then(() => {
   console.log("\u{1F7E2} MongoDB connected");
   console.log("\u{1F7E2} Starting server\u2026");

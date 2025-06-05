@@ -1,21 +1,20 @@
 // packages/app/src/views/share-progress-view.ts
 
-import { View } from "@calpoly/mustang";
+import { define, Form, View, History } from "@calpoly/mustang";
 import { html, css } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { Model, User } from "../model";
 import { Msg } from "../messages";
-import { History } from "@calpoly/mustang";
 
 @customElement("share-progress-view")
 export class ShareProgressView extends View<Model, Msg> {
+  // ─────── Register <mu-form> with Mustang ────────────────────────────────────
+  static uses = define({
+    "mu-form": Form.Element
+  });
+
   @state()
   private currentUser?: User;
-
-  // form fields
-  private withUserId = "";
-  private mode: "temporary" | "indefinite" = "indefinite";
-  private expiresAt: Date | undefined;
 
   constructor() {
     super("truewalk:model");
@@ -23,69 +22,82 @@ export class ShareProgressView extends View<Model, Msg> {
 
   override connectedCallback() {
     super.connectedCallback();
-    // Trigger loading currentUser if not already loaded
+    // Tell MVU to load “/api/auth/me” and push the result into model.currentUser
     this.dispatchMessage(["user/load", {}]);
   }
 
-  // Whenever the store updates the user in the model, grab it locally:
-  protected updated(changed: Map<string, any>) {
-    super.updated(changed);
+  // Whenever model.currentUser changes, copy it into our local state
+  protected updated(_changed: Map<string, any>) {
+    super.updated(_changed);
     if (this.model.currentUser && this.model.currentUser !== this.currentUser) {
       this.currentUser = this.model.currentUser;
     }
   }
 
-  private onWithUserIdChange(e: InputEvent) {
-    const input = e.target as HTMLInputElement;
-    this.withUserId = input.value;
-  }
-
-  private onModeChange(e: InputEvent) {
-    const select = e.target as HTMLSelectElement;
-    this.mode = select.value as "temporary" | "indefinite";
-    if (this.mode === "indefinite") {
-      this.expiresAt = undefined; // clear out any old date
-    }
-  }
-
-  private onExpiresAtChange(e: InputEvent) {
-    const input = e.target as HTMLInputElement;
-    this.expiresAt = input.value ? new Date(input.value) : undefined;
-  }
-
-  private handleSubmit(e: Event) {
+  /**
+   * Called when <mu-form> fires its “mu-form:submit” event.
+   *
+   * By omitting any `.init=…`, the form fields start blank.  User types
+   * into them, and when they hit “Save Share,” this handler sees:
+   *   e.detail = { withUserId: string, mode: "indefinite"|"temporary", expiresAt?: string }
+   */
+  private handleMuFormSubmit(
+    e: Form.SubmitEvent<{
+      withUserId: string;
+      mode: "temporary" | "indefinite";
+      expiresAt?: string;
+    }>
+  ) {
     e.preventDefault();
-    if (!this.currentUser) {
-      return; // shouldn’t happen—but guard anyway
-    }
-    const userId = this.currentUser.id;
 
+    if (!this.currentUser) {
+      // In theory this shouldn’t happen (we only render the form once
+      // currentUser is defined), but just in case:
+      return console.warn("No currentUser available!");
+    }
+
+    const data = e.detail;
+    const trimmedId = data.withUserId.trim();
+    if (!trimmedId) {
+      return alert("Please enter a valid User ID to share with.");
+    }
+
+    // Build exactly the “share” object your server expects:
+    const shareObject = {
+      withUserId: trimmedId,
+      mode: data.mode,
+      sharedAt: new Date(),
+      // Only set expiresAt if mode === "temporary" and a date string was provided
+      expiresAt:
+        data.mode === "temporary" && data.expiresAt
+          ? new Date(data.expiresAt)
+          : undefined
+    };
+
+    // Dispatch our “share/save” message (UPDATE handler does the PUT, etc.)
     this.dispatchMessage([
-        "share/save",
-        {
-          userid: this.withUserId.trim(),
-          share: {
-            withUserId: this.withUserId.trim(),
-            mode: this.mode,
-            sharedAt: new Date(),
-            expiresAt: this.mode === "temporary" ? this.expiresAt : undefined,
-          },
-          onSuccess: () => {
-            History.dispatch(this, "history/navigate", { href: "/app/track" });
-          },
-          onFailure: (err: Error) => {
-            console.error("Failed to save share:", err);
-          },
+      "share/save",
+      {
+        userid: this.currentUser.id,
+        share: shareObject,
+        onSuccess: () => {
+          // After a successful PUT, navigate (MVU) to /app/share
+          History.dispatch(this, "history/navigate", { href: "/app/share" });
         },
-      ]);
+        onFailure: (err: Error) => {
+          console.error("Failed to save share:", err);
+          alert("Could not save share (check console).");
+        }
+      }
+    ]);
   }
 
   static styles = css`
     :host {
       display: block;
-      padding: 70px 1rem 1rem; /* push content below the fixed header */
+      padding: 70px 1rem 1rem; /* push content below header */
     }
-    form {
+    mu-form {
       max-width: 360px;
       margin: 0 auto;
       display: grid;
@@ -105,61 +117,46 @@ export class ShareProgressView extends View<Model, Msg> {
     button {
       width: 100px;
       padding: 0.4rem;
+      margin-top: 1rem;
     }
   `;
 
   protected createRenderRoot() {
-    return this; // render into light DOM so global styles apply
+    // Render in light DOM so your global CSS applies
+    return this;
   }
 
   override render() {
+    // If currentUser is not yet loaded, show a loading message:
     if (!this.currentUser) {
       return html`<h2>Loading user…</h2>`;
     }
 
+    // Otherwise render our <mu-form> (no .init=… so fields start blank):
     return html`
       <h1>Share Your Progress</h1>
-      <form @submit=${this.handleSubmit}>
+
+      <mu-form @mu-form:submit=${this.handleMuFormSubmit}>
         <label>
           Share with User ID:
-          <input
-            type="text"
-            .value=${this.withUserId}
-            @input=${this.onWithUserIdChange}
-            required
-          />
+          <input name="withUserId" type="text" required />
         </label>
 
         <label>
           Mode:
-          <select @change=${this.onModeChange}>
-            <option value="indefinite" ?selected=${this.mode === "indefinite"}>
-              Indefinite
-            </option>
-            <option value="temporary" ?selected=${this.mode === "temporary"}>
-              Temporary
-            </option>
+          <select name="mode" required>
+            <option value="indefinite">Indefinite</option>
+            <option value="temporary">Temporary</option>
           </select>
         </label>
 
-        ${this.mode === "temporary"
-          ? html`
-              <label>
-                Expires At (only for “temporary”):
-                <input
-                  type="date"
-                  .value=${this.expiresAt
-                    ? this.expiresAt.toISOString().substr(0, 10)
-                    : ""}
-                  @change=${this.onExpiresAtChange}
-                  required
-                />
-              </label>
-            `
-          : null}
+        <label>
+          Expires At (for “temporary”):
+          <input name="expiresAt" type="date" />
+        </label>
 
         <button type="submit">Save Share</button>
-      </form>
+      </mu-form>
     `;
   }
 }
