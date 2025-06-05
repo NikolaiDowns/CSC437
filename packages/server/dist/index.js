@@ -22,6 +22,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var import_express = __toESM(require("express"));
+var import_cors = __toESM(require("cors"));
 var import_path = __toESM(require("path"));
 var import_mongo = require("./services/mongo");
 var import_users = __toESM(require("./routes/users"));
@@ -34,6 +35,13 @@ app.use(
 app.use(
   "/node_modules",
   import_express.default.static(import_path.default.join(__dirname, "../node_modules"))
+);
+app.use(
+  (0, import_cors.default)({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true
+  })
 );
 app.use(import_express.default.json());
 app.use("/api/auth", import_auth.default);

@@ -11,7 +11,37 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET || "NOT_A_SECRET";
 
 const router = express.Router();
 
-/** helper to sign a JWT for a given username */
+/**
+ * JWT‐check middleware.  If OPTIONS → short‐circuit to next(),
+ * otherwise read "Authorization: Bearer <token>" header, verify JWT,
+ * and attach req.userId = payload.username → next().
+ */
+export function authenticateUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (req.method === "OPTIONS") {
+    return next();
+  }
+
+  const authHeader = req.headers["authorization"];
+  const token = authHeader?.split(" ")[1];
+  if (!token) {
+    return res.status(401).end();
+  }
+
+  jwt.verify(token, TOKEN_SECRET, (err, payload) => {
+    if (err) {
+      return res.status(403).end();
+    }
+    // Attach the username for downstream lookups:
+    (req as any).userId = (payload as any).username;
+    next();
+  });
+}
+
+/** helper to sign & return a JWT for a given username */
 function generateAccessToken(username: string): Promise<string> {
   return new Promise((resolve, reject) =>
     jwt.sign(
@@ -23,7 +53,7 @@ function generateAccessToken(username: string): Promise<string> {
   );
 }
 
-// 1) Register → create creds + user record + return token
+// 1) Register: create credentials + create an empty User record + return a 201 + { token }
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
   if (typeof username !== "string" || typeof password !== "string") {
@@ -31,25 +61,26 @@ router.post("/register", async (req, res) => {
   }
 
   try {
+    // create credentials in your credential store
     await credentials.create(username, password);
 
-    // include tocAccepted so TS is happy
+    // create a matching User record in your Users collection (with no shares, no usage yet)
     await Users.create({
       id: username,
       name: username,
-      tocAccepted: false
+      tocAccepted: false,
+      shares: [],
+      usage: [],
     });
 
     const token = await generateAccessToken(username);
     return res.status(201).json({ token });
-
   } catch (err: any) {
     return res.status(409).json({ error: err.message });
   }
 });
 
-
-// 2) Login → verify creds + return token
+// 2) Login: verify credentials + return a 200 + { token }
 router.post("/login", async (req: Request, res: Response) => {
   const { username, password } = req.body;
   if (typeof username !== "string" || typeof password !== "string") {
@@ -65,7 +96,7 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-// 3) Fetch current user → requires a valid JWT
+// 3) Fetch current user (protected by authenticateUser)
 router.get(
   "/me",
   authenticateUser,
@@ -82,27 +113,5 @@ router.get(
     }
   }
 );
-
-// 4) JWT‐check middleware
-export function authenticateUser(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader?.split(" ")[1];
-  if (!token) {
-    return res.status(401).end();
-  }
-
-  jwt.verify(token, TOKEN_SECRET, (err, payload) => {
-    if (err) {
-      return res.status(403).end();
-    }
-    // attach the username from the token payload
-    (req as any).userId = (payload as any).username;
-    next();
-  });
-}
 
 export default router;
