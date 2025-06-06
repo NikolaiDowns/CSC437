@@ -1,21 +1,14 @@
 // packages/app/src/views/share-progress-view.ts
 
-import "../components/share-form-card";   // Registers <share-form-card>
-import "../components/share-entry-card";  // Registers <share-entry-card>
+import "../components/share-form-card";   // <share-form-card> emits "share-submit"
+import "../components/share-entry-card";  // <share-entry-card> emits "stop-share"
 import { define, View, History } from "@calpoly/mustang";
 import { html, css } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { Model, User, DataShare as DataShareString } from "../model"; 
+import { Model, User, DataShare as DataShareString } from "../model";
 import { Msg } from "../messages";
 
-/**
- * DataShareString is the front-end’s “string‐based” share record:
- * (withUserId, mode, sharedAt: string, expiresAt?: string).
- * We only use it to read from currentUser.shares[], which indeed
- * stores ISO‐date strings. But when dispatching “share/save” we
- * build a separate object that has Date instances.
- */
 @customElement("share-progress-view")
 export class ShareProgressView extends View<Model, Msg> {
   static uses = define({});
@@ -28,7 +21,6 @@ export class ShareProgressView extends View<Model, Msg> {
 
   override connectedCallback() {
     super.connectedCallback();
-    // Trigger “user/load” → fetch "/api/auth/me" → populate currentUser (with .shares[])
     this.dispatchMessage(["user/load", {}]);
   }
 
@@ -39,7 +31,7 @@ export class ShareProgressView extends View<Model, Msg> {
     }
   }
 
-  // Fired by <share-form-card> with { withUserId: string; mode: "temporary"|"indefinite"; expiresAt?: string }
+  // Fired when <share-form-card> does “@share-submit”
   private handleNewShare(
     e: CustomEvent<{
       withUserId: string;
@@ -50,26 +42,23 @@ export class ShareProgressView extends View<Model, Msg> {
     const shareData = e.detail;
     if (!this.currentUser) return;
 
-    // Build a plain JS object that exactly matches Msg["share/save"]’s “share” shape:
-    //   { withUserId: string; mode: "temporary"|"indefinite"; sharedAt: Date; expiresAt?: Date; }
+    // Build the object that matches Msg["share/save"]
     const shareObject = {
       withUserId: shareData.withUserId,
       mode: shareData.mode,
-      sharedAt: new Date(), // <-- Date, not string
+      sharedAt: new Date(),
       expiresAt:
         shareData.mode === "temporary" && shareData.expiresAt
-          ? new Date(shareData.expiresAt) // convert ISO string→Date
+          ? new Date(shareData.expiresAt)
           : undefined,
     };
 
-    // Dispatch “share/save” (which your update() already handles):
     this.dispatchMessage([
       "share/save",
       {
         userid: this.currentUser.id,
         share: shareObject,
         onSuccess: () => {
-          // once saved, reload /app/share so the list updates
           History.dispatch(this, "history/navigate", { href: "/app/share" });
         },
         onFailure: (err: Error) => {
@@ -80,36 +69,33 @@ export class ShareProgressView extends View<Model, Msg> {
     ]);
   }
 
-  // Fired by <share-entry-card> with { withUserId: string }
+  // Fired when <share-entry-card> does “@stop-share”
   private handleStopShare(e: CustomEvent<{ withUserId: string }>) {
     const targetId = e.detail.withUserId;
     if (!this.currentUser) return;
 
-    // Since you said “there is no share/stop yet,” we’ll just console.log here.
-    // If you do add a “share/stop” Msg + update() logic, you can dispatch it here:
-    console.log("Stop sharing with:", targetId);
-
-    // Example stub for future “share/stop”:
-    // this.dispatchMessage([
-    //   "share/stop",
-    //   {
-    //     userid: this.currentUser.id,
-    //     withUserId: targetId,
-    //     onSuccess: () => {
-    //       History.dispatch(this, "history/navigate", { href: "/app/share" });
-    //     },
-    //     onFailure: (err: Error) => {
-    //       console.error("Failed to stop share:", err);
-    //       alert("Could not stop sharing (see console).");
-    //     },
-    //   },
-    // ]);
+    // Dispatch the new "share/stop" message:
+    this.dispatchMessage([
+      "share/stop",
+      {
+        userid: this.currentUser.id,
+        withUserId: targetId,
+        onSuccess: () => {
+          // Optionally do something; 
+          // the MVU store is already updated by update()
+        },
+        onFailure: (err: Error) => {
+          console.error("Failed to stop share:", err);
+          alert("Could not stop sharing (see console).");
+        },
+      },
+    ]);
   }
 
   static styles = css`
     :host {
       display: block;
-      padding: 70px 1rem 1rem; /* push content below fixed header */
+      padding: 70px 1rem 1rem;
     }
     h1 {
       margin-bottom: 1rem;
@@ -123,22 +109,20 @@ export class ShareProgressView extends View<Model, Msg> {
   `;
 
   protected createRenderRoot() {
-    // Render in light DOM so that your global CSS variables still apply
-    return this;
+    return this; // render in light DOM
   }
 
   override render() {
-    // If not loaded, show placeholder
     if (!this.currentUser) {
       return html`<h2>Loading user…</h2>`;
     }
 
-    // (1) The “new‐share” form up top:
+    // (1) Show the "new share" form at top:
     const formSection = html`
       <share-form-card @share-submit="${this.handleNewShare}"></share-form-card>
     `;
 
-    // (2) If there are no active shares, show text
+    // (2) If no shares exist, show placeholder text:
     if (!this.currentUser.shares || this.currentUser.shares.length === 0) {
       return html`
         <h1>Share Your Progress</h1>
@@ -147,7 +131,7 @@ export class ShareProgressView extends View<Model, Msg> {
       `;
     }
 
-    // (3) Otherwise, render one <share-entry-card> per share in currentUser.shares[]
+    // (3) Otherwise, list each share‐entry with a "Stop Sharing" button
     const listSection = html`
       <div class="entries">
         ${this.currentUser.shares.map(

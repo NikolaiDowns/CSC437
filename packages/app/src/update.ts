@@ -7,7 +7,7 @@ import { Msg } from "./messages";
 export default function update(
   message: Msg,
   apply: Update.ApplyMap<Model>,
-  _user: any
+  _user: any // we read JWT manually, not using Mustang’s Auth.User
 ) {
   switch (message[0]) {
     //
@@ -15,7 +15,7 @@ export default function update(
     //
     case "share/save": {
       const {
-        userid, // the logged‐in user’s ID (originalUser.id)
+        userid, // logged‐in user’s ID
         share,
         onSuccess,
         onFailure,
@@ -24,12 +24,10 @@ export default function update(
       let current: Model | undefined;
       apply((m) => {
         current = m;
-        return m; // just capture `m`—no changes yet
+        return m; // just capture `m`, no changes yet
       });
-
       if (!current || !current.currentUser) {
         const err = new Error("No loaded user to update shares");
-        console.error(err);
         if (onFailure) onFailure(err);
         break;
       }
@@ -37,7 +35,7 @@ export default function update(
       const originalUser: User = current.currentUser;
       const rawToken = localStorage.getItem("token") || "";
 
-      // Instead of do a full PUT /users/:id, we now call POST /users/:id/share
+      // Send POST /api/users/:id/share
       fetch(
         `http://localhost:3000/api/users/${encodeURIComponent(
           originalUser.id
@@ -48,7 +46,7 @@ export default function update(
             "Content-Type": "application/json",
             Authorization: `Bearer ${rawToken}`,
           },
-          body: JSON.stringify(share), // MUST include { withUserId, mode, sharedAt, expiresAt? }
+          body: JSON.stringify(share), // { withUserId, mode, sharedAt:Date, expiresAt?:Date }
         }
       )
         .then((res) => {
@@ -62,7 +60,6 @@ export default function update(
         })
         .then((json: unknown) => {
           const updatedUser = json as User;
-          // 6) Update the MVU state with the updated sharer (so shares[] is up to date)
           apply((model) => ({
             ...model,
             currentUser: updatedUser,
@@ -71,6 +68,62 @@ export default function update(
         })
         .catch((err: Error) => {
           console.error("Error in share/save:", err);
+          if (onFailure) onFailure(err);
+        });
+
+      break;
+    }
+
+    //
+    // ─── SHARE/STOP ────────────────────────────────────────────────────────────────
+    //
+    case "share/stop": {
+      const { userid, withUserId, onSuccess, onFailure } = message[1];
+
+      let current: Model | undefined;
+      apply((m) => {
+        current = m;
+        return m;
+      });
+      if (!current || !current.currentUser) {
+        const err = new Error("No loaded user to stop share");
+        if (onFailure) onFailure(err);
+        break;
+      }
+
+      const rawToken = localStorage.getItem("token") || "";
+      // Send DELETE /api/users/:userid/share/:withUserId
+      fetch(
+        `http://localhost:3000/api/users/${encodeURIComponent(
+          userid
+        )}/share/${encodeURIComponent(withUserId)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${rawToken}`,
+          },
+        }
+      )
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw new Error(
+              `Failed to stop share from ${userid} to ${withUserId}, status ${res.status}`
+            );
+          }
+        })
+        .then((json: unknown) => {
+          const updatedUser = json as User;
+          apply((model) => ({
+            ...model,
+            currentUser: updatedUser,
+          }));
+          if (onSuccess) onSuccess();
+        })
+        .catch((err: Error) => {
+          console.error("Error in share/stop:", err);
           if (onFailure) onFailure(err);
         });
 

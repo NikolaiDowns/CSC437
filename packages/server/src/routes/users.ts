@@ -205,4 +205,67 @@ router.post("/:id/share", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * DELETE /api/users/:id/share/:withUserId
+ *   → “id” is the sharer’s username (the logged‐in user’s ID)
+ *   → “withUserId” is the other user we want to stop sharing with
+ *   → removes the share from both sides:
+ *      1) $pull from sharer.shares where withUserId matches
+ *      2) $pull from recipient.receives where withUserId === sharer
+ *   → requires that (req as any).userId === req.params.id
+ *   → returns 200 + JSON(updatedSharer) on success
+ */
+router.delete(
+  "/:id/share/:withUserId",
+  async (req: Request, res: Response) => {
+    try {
+      const sharerId = req.params.id;
+      const targetId = req.params.withUserId;
+
+      // 1) Security check: only the logged‐in user can stop sharing from their own account
+      if ((req as any).userId !== sharerId) {
+        return res
+          .status(403)
+          .send("Forbidden: cannot stop sharing on behalf of another user");
+      }
+
+      // 2) Pull (remove) from sharer.shares
+      const updatedSharer = await UserModel.findOneAndUpdate(
+        { id: sharerId },
+        { $pull: { shares: { withUserId: targetId } } },
+        { new: true }
+      ).exec();
+
+      if (!updatedSharer) {
+        return res
+          .status(404)
+          .send(`Sharer user "${sharerId}" not found`);
+      }
+
+      // 3) Pull (remove) from recipient.receives
+      const updatedRecipient = await UserModel.findOneAndUpdate(
+        { id: targetId.trim() },
+        { $pull: { receives: { withUserId: sharerId } } },
+        { new: true }
+      ).exec();
+
+      if (!updatedRecipient) {
+        // If recipient doesn’t exist, log a warning but still return the updatedSharer
+        console.warn(
+          `⚠️  /share: Stopped share from "${sharerId}" to "${targetId}", but recipient "${targetId}" not found.`
+        );
+      }
+
+      // 4) Return the updated sharer
+      return res.status(200).json(updatedSharer);
+    } catch (err: any) {
+      console.error(
+        "DELETE /api/users/:id/share/:withUserId error:",
+        err
+      );
+      return res.status(500).json({ error: err.message });
+    }
+  }
+);
+
 export default router;

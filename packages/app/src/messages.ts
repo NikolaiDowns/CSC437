@@ -19,4 +19,14 @@ export type Msg =
         onSuccess?: () => void;
         onFailure?: (err: Error) => void;
       }
+    ]
+  // ← NEW: "share/stop"
+  | [
+      "share/stop",
+      {
+        userid: string;
+        withUserId: string;
+        onSuccess?: () => void;
+        onFailure?: (err: Error) => void;
+      }
     ];

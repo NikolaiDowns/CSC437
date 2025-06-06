@@ -53,15 +53,16 @@ export class ShareEntryCard extends LitElement {
     button {
       padding: 0.4rem 0.8rem;
       font-size: 0.9rem;
-      background: #e74c3c;
+      background: var(--color-accent);
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       flex-shrink: 0;
+      transition: background 0.1s ease;
     }
     button:hover {
-      background: #c0392b;
+      background: var(--color-secondary);
     }
   `;
 

@@ -56,9 +56,10 @@ export class ShareFormCard extends LitElement {
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      transition: background 0.1s ease;
     }
     button:hover {
-      background: var(--color-primary, #182d3b);
+      background: var(--color-secondary, #182d3b);
     }
   `;
 
