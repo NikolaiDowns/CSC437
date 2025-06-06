@@ -18,6 +18,7 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var user_svc_exports = {};
 __export(user_svc_exports, {
+  UserModel: () => UserModel,
   default: () => user_svc_default
 });
 module.exports = __toCommonJS(user_svc_exports);
@@ -67,12 +68,14 @@ const UserSchema = new import_mongoose.Schema(
       type: [DataShareSchema],
       default: []
     },
+    receives: {
+      type: [DataShareSchema],
+      // ← NEW field
+      default: []
+    },
     usage: {
       type: [Number],
-      default: () => Array.from(
-        { length: 156 },
-        () => Math.floor(Math.random() * 71)
-      )
+      default: () => Array.from({ length: 156 }, () => Math.floor(Math.random() * 71))
     },
     isDeleted: {
       type: Boolean,
@@ -104,8 +107,12 @@ function update(id, u) {
   });
 }
 function remove(id) {
-  return UserModel.findOneAndDelete({ id }).then((del) => {
-    if (!del) throw `${id} not found`;
+  return UserModel.findOneAndDelete({ id }).then((deleted) => {
+    if (!deleted) throw `${id} not found`;
   });
 }
-var user_svc_default = { index, get, create, update, remove };
+var user_svc_default = { index, get, create, update, remove, UserModel };
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  UserModel
+});

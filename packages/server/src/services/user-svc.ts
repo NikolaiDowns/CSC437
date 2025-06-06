@@ -1,9 +1,11 @@
-// src/services/user-svc.ts
+// packages/server/src/services/user-svc.ts
 
 import { Schema, model } from "mongoose";
 import { User, DataShare } from "../models/user";
 
-// Subdocument for sharing relationships
+// ───────────────────────────────────────────────────────────────────────────────
+// Sub-document schema for DataShare (used both in shares[] and receives[]).
+// ───────────────────────────────────────────────────────────────────────────────
 const DataShareSchema = new Schema<DataShare>(
   {
     withUserId: {
@@ -27,6 +29,9 @@ const DataShareSchema = new Schema<DataShare>(
   { _id: false }
 );
 
+// ───────────────────────────────────────────────────────────────────────────────
+// Main User schema: now with a “receives” array as well as “shares”.
+// ───────────────────────────────────────────────────────────────────────────────
 const UserSchema = new Schema<User>(
   {
     id: {
@@ -46,16 +51,20 @@ const UserSchema = new Schema<User>(
     },
     tocVersion: String,
     tocTimestamp: Date,
+
     shares: {
       type: [DataShareSchema],
       default: [],
     },
+    receives: {
+      type: [DataShareSchema], // ← NEW field
+      default: [],
+    },
+
     usage: {
       type: [Number],
-      default: () => Array.from(
-        { length: 156 },
-        () => Math.floor(Math.random() * 71)
-      )
+      default: () =>
+        Array.from({ length: 156 }, () => Math.floor(Math.random() * 71)),
     },
     isDeleted: {
       type: Boolean,
@@ -79,27 +88,26 @@ function get(id: string): Promise<User | null> {
   return UserModel.findOne({ id }).exec();
 }
 
-// Create
 function create(u: User): Promise<User> {
   const doc = new UserModel(u);
   return doc.save();
 }
 
-// Update
 function update(id: string, u: User): Promise<User> {
-  return UserModel.findOneAndUpdate({ id }, u, { new: true })
-    .then((updated) => {
-      if (!updated) throw `${id} not found`;
-      return updated;
-    });
+  return UserModel.findOneAndUpdate({ id }, u, { new: true }).then((updated) => {
+    if (!updated) throw `${id} not found`;
+    return updated;
+  });
 }
 
-// Remove
 function remove(id: string): Promise<void> {
-  return UserModel.findOneAndDelete({ id })
-    .then((del) => {
-      if (!del) throw `${id} not found`;
-    });
+  return UserModel.findOneAndDelete({ id }).then((deleted) => {
+    if (!deleted) throw `${id} not found`;
+  });
 }
 
-export default { index, get, create, update, remove };
+// ← Make sure UserModel is a named export, so routes/users.ts can import it:
+export { UserModel };
+
+// ← Also keep the default export so you can do `import Users from "./user-svc"`
+export default { index, get, create, update, remove, UserModel };

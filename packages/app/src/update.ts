@@ -7,7 +7,7 @@ import { Msg } from "./messages";
 export default function update(
   message: Msg,
   apply: Update.ApplyMap<Model>,
-  _user: any // we don’t use Mustang’s Auth.User here because we read the JWT manually
+  _user: any
 ) {
   switch (message[0]) {
     //
@@ -15,17 +15,16 @@ export default function update(
     //
     case "share/save": {
       const {
-        userid,     // this is the *logged-in* user’s ID (originalUser.id)
+        userid, // the logged‐in user’s ID (originalUser.id)
         share,
         onSuccess,
         onFailure,
       } = message[1];
 
-      // 1) Read the current Model synchronously so we can grab model.currentUser
       let current: Model | undefined;
       apply((m) => {
         current = m;
-        return m; // no changes—just capture `m`
+        return m; // just capture `m`—no changes yet
       });
 
       if (!current || !current.currentUser) {
@@ -36,51 +35,38 @@ export default function update(
       }
 
       const originalUser: User = current.currentUser;
-      const prevShares: User["shares"] = Array.isArray(originalUser.shares)
-        ? originalUser.shares
-        : [];
-
-      // 2) Build a brand-new shares array:
-      const updatedShares = [...prevShares, share];
-
-      // 3) Copy originalUser into a new object with shares replaced:
-      const userToSend: User = {
-        ...originalUser,
-        shares: updatedShares,
-      };
-
-      // 4) Read the raw JWT from localStorage:
       const rawToken = localStorage.getItem("token") || "";
 
-      // 5) PUT the entire user document (including updated shares) back to the server
+      // Instead of do a full PUT /users/:id, we now call POST /users/:id/share
       fetch(
         `http://localhost:3000/api/users/${encodeURIComponent(
           originalUser.id
-        )}`,
+        )}/share`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${rawToken}`,
           },
-          body: JSON.stringify(userToSend),
+          body: JSON.stringify(share), // MUST include { withUserId, mode, sharedAt, expiresAt? }
         }
       )
         .then((res) => {
           if (res.status === 200) {
             return res.json();
           } else {
-            throw new Error(`Failed to save share for ${originalUser.id}`);
+            throw new Error(
+              `Failed to save share for ${originalUser.id}, status ${res.status}`
+            );
           }
         })
         .then((json: unknown) => {
           const updatedUser = json as User;
-          // 6) Apply the updated user back into the MVU store:
+          // 6) Update the MVU state with the updated sharer (so shares[] is up to date)
           apply((model) => ({
             ...model,
             currentUser: updatedUser,
           }));
-          // 7) Call onSuccess():
           if (onSuccess) onSuccess();
         })
         .catch((err: Error) => {
@@ -96,13 +82,11 @@ export default function update(
     //
     case "user/load": {
       const token = localStorage.getItem("token") || "";
-      // ← Here is the change: point at port 3000 (not Vite’s port 5173)
       fetch("http://localhost:3000/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((response) => {
           if (!response.ok) {
-            // invalid/expired token → clear out currentUser
             apply((model) => {
               const next = { ...model };
               delete next.currentUser;
@@ -119,7 +103,6 @@ export default function update(
         })
         .catch((err) => {
           console.error("Error loading user:", err);
-          // on network error, also clear currentUser
           apply((model) => {
             const copy = { ...model };
             delete copy.currentUser;

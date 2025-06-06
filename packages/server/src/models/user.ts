@@ -1,3 +1,4 @@
+//server/src/models/user.ts
 export interface DataShare {
     withUserId: string;              // the other user’s id
     mode: 'temporary' | 'indefinite';// one‐off share or open‐ended
@@ -15,6 +16,7 @@ export interface User {
     tocTimestamp?: Date;
   
     shares?: DataShare[];
+    receives?: DataShare[]; // NEW
     usage?: number[];
     isDeleted?: boolean;
     deletedAt?: Date;
