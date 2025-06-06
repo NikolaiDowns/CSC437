@@ -2,31 +2,44 @@
 
 import { LitElement, html, css } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { Observer, Auth, Events } from "@calpoly/mustang";
+import { Observer, Events } from "@calpoly/mustang";
+import "./options-menu"; // ← Import the <options-menu> we just created
 
 @customElement("app-header")
 export class AppHeader extends LitElement {
-  // 1) Keep track of whether the user is authenticated, and what their username is
-  @state()
-  private authenticated = false;
-
-  @state()
-  private username: string | null = null;
-
-  // 2) We’ll wire up an Observer<any> in case Mustang publishes an auth change
-  //    (e.g., right after login). That way the header updates immediately.
+  // ─── Track whether the user is signed‐in and their username ────────────────
+  @state() private authenticated = false;
+  @state() private username: string | null = null;
   private authObserver!: Observer<any>;
 
+  // ─── Render into light DOM so global styles.css can still apply ────────────
+  protected createRenderRoot() {
+    return this;
+  }
+
   static styles = css`
-    /* Basic toolbar styling */
-    .toolbar {
+    /* ───────────────────────────────────────────────────────────────────────── */
+    /* FIXED HEADER BAR                                                         */
+    /* ───────────────────────────────────────────────────────────────────────── */
+    header.toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 0.5rem 1rem;
-      background-color: var(--toolbar-bg, #ffffff);
+      justify-content: space-between;
+      padding: 0 1rem;
+      background-color: var(--color-background, whitesmoke);
       border-bottom: 1px solid #ddd;
+      box-sizing: border-box;
+      z-index: 1000;
     }
+
+    /* ───────────────────────────────────────────────────────────────────────── */
+    /* LEFT: logo SVG + “TRUE WALK” (link)                                        */
+    /* ───────────────────────────────────────────────────────────────────────── */
     .toolbar-left {
       display: flex;
       align-items: center;
@@ -36,14 +49,39 @@ export class AppHeader extends LitElement {
       width: 32px;
       height: 32px;
     }
+    /* “TRUE WALK” must be WalkHard blue (#0353A4) and a link to /app */
+    .toolbar-left a {
+      color: #0353A4;           /* WalkHard blue */
+      text-decoration: none;    /* remove underline */
+      font-size: 1.25rem;
+      font-weight: 700;
+      cursor: default;          /* not a pointer */
+    }
+    .toolbar-left a:hover,
+    .toolbar-left a:active,
+    .toolbar-left a:focus {
+      color: #0353A4;
+      text-decoration: none;
+      cursor: default;
+    }
+
+    /* ───────────────────────────────────────────────────────────────────────── */
+    /* RIGHT SIDE: greeting / nav links / options                                  */
+    /* ───────────────────────────────────────────────────────────────────────── */
     .toolbar-right {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+      gap: 1rem;
+      flex-wrap: nowrap;
     }
-    .toolbar-right a,
-    .toolbar-right button {
+
+    .greeting {
+      font-weight: 600;
+      color: var(--color-primary, #182d3b);
+      white-space: nowrap;
+    }
+
+    .toolbar-right a {
       background: none;
       border: none;
       padding: 0.25rem 0.5rem;
@@ -51,29 +89,31 @@ export class AppHeader extends LitElement {
       cursor: pointer;
       text-decoration: none;
       color: var(--link-color, #007bff);
+      white-space: nowrap;
     }
-    .toolbar-right a:hover,
-    .toolbar-right button:hover {
+    .toolbar-right a:hover {
       text-decoration: underline;
     }
+
+    /* ───────────────────────────────────────────────────────────────────────── */
+    /* SPACER so that main content begins below the fixed header                   */
+    /* ───────────────────────────────────────────────────────────────────────── */
     .spacer {
-      flex: 1 1 auto;
+      height: 60px;
+      width: 100%;
+      flex-shrink: 0;
     }
   `;
 
   constructor() {
     super();
-    // 3) Listen for Mustang’s Auth changes. If the user “signed in” via Events.relay(),
-    //    this callback will fire immediately with the new authState. We still pass
-    //    just (this, "truewalk:auth") because that is how Observer works today.
     this.authObserver = new Observer(this, "truewalk:auth");
   }
 
   connectedCallback() {
     super.connectedCallback();
 
-    // 4) First, check localStorage right now. If we have a saved username (and token),
-    //    assume the user is already authenticated and show “Hello, <username>” immediately.
+    // If localStorage has username+token, treat as already signed in
     const storedUsername = localStorage.getItem("username");
     const storedToken = localStorage.getItem("token");
     if (storedUsername && storedToken) {
@@ -81,51 +121,39 @@ export class AppHeader extends LitElement {
       this.username = storedUsername;
     }
 
-    // 5) Also observe Mustang’s Auth context. If we just finished a login flow via
-    //    Mustang’s Events.relay(["auth/signin", token]), this callback will update our state.
-    //    **Only override when authState.user.authenticated === true**. We remove the
-    //    else‐branch that would wipe out our localStorage‐driven state.
+    // Observe Mustang’s Auth context to pick up any sign‐in changes
     this.authObserver.observe((authState: any) => {
       if (authState.user?.authenticated) {
         this.authenticated = true;
         this.username = authState.user.username || this.username;
       }
-      // If authState.user.authenticated is false, do nothing—keep whatever localStorage said.
+      // If they sign out via the Auth provider, we won’t clear localStorage here.
     });
   }
 
-  // No manual `.disconnect()` because the current Observer API does not expose it.
-  // Let the element go out of scope to end observation.
-
-  // 6) Navigate to login.html with a redirect back to this page
+  // ─── Navigate to login.html (with redirect) ─────────────────────────────────
   private goLogin() {
     const here = window.location.pathname;
     window.location.href = `/login.html?redirect=${encodeURIComponent(here)}`;
   }
 
-  // 7) Navigate to signup.html with a redirect back to this page
+  // ─── Navigate to signup.html (with redirect) ────────────────────────────────
   private goSignup() {
     const here = window.location.pathname;
     window.location.href = `/signup.html?redirect=${encodeURIComponent(here)}`;
   }
 
-  // 8) Signal Mustang’s Auth to sign out, then clear localStorage + reload
-  //    NOTE: We accept the MouseEvent so we can pass it to Events.relay(...)
+  // ─── Handle “Sign Out” from <options-menu> ─────────────────────────────────
   private doSignOut(e: MouseEvent) {
-    // Mustang’s Auth.Provider is watching for “auth/signout” events in the "truewalk:auth" context.
-    // The proper way to fire that is to pass the original MouseEvent into Events.relay(...)
+    // Relay the event into Mustang’s Auth context:
     Events.relay(e, "auth:message", ["auth/signout"]);
-
-    // Clear our localStorage so we don’t auto‐login next time.
+    // Clear localStorage so next reload shows logged‐out state:
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-
-    // Reload. After reload, neither localStorage nor Mustang’s Auth will be “authenticated,”
-    // so we’ll see the “Sign Up / Login” buttons again.
     window.location.reload();
   }
 
-  // 9) (Optional) Dark/light toggle—kept exactly as in proto
+  // ─── Handle “Dark mode” toggle from <options-menu> ──────────────────────────
   private toggleTheme() {
     const isDark = document.documentElement.classList.toggle("dark");
     const btn = this.renderRoot.querySelector<HTMLButtonElement>(".theme-toggle");
@@ -145,59 +173,36 @@ export class AppHeader extends LitElement {
     });
   }
 
-  // 10) Opt out of Shadow DOM so global CSS (styles.css) can style this header
-  protected createRenderRoot() {
-    return this;
-  }
-
   render() {
     return html`
       <header class="toolbar">
         <div class="toolbar-left">
-          <img
-            src="/icons/walkhard.svg"
-            alt="True Walk logo"
-            class="box-icon-small"
-          />
+          <!-- Keep the SVG icon; turn “TRUE WALK” text into a link back to /app -->
+          <img src="/icons/walkhard.svg" alt="True Walk logo" class="box-icon-small" />
           <strong>TRUE WALK</strong>
         </div>
+
         <div class="toolbar-right">
           ${this.authenticated
-            ? html`
-                <!-- ===== Logged‐in state ===== -->
-                <span>Hello, ${this.username}</span>
-                <!-- Notice we now pass the MouseEvent into doSignOut: -->
-                <button @click=${(e: MouseEvent) => this.doSignOut(e)}>
-                  Sign Out
-                </button>
-              `
+            ? html`<span class="greeting">Hello, ${this.username}</span>`
             : html`
-                <!-- ===== Logged‐out state ===== -->
                 <button @click=${this.goSignup}>Sign Up</button>
                 <button @click=${this.goLogin}>Login</button>
               `}
-
-          <div class="spacer"></div>
-
-          <!-- Always‐visible navigation links -->
+          <options-menu
+            @option-signout=${(e: Event) => this.doSignOut(e as MouseEvent)}
+            @option-toggle-theme=${() => this.toggleTheme()}
+          ></options-menu>
           <a href="/app/share">Share Progress</a>
           <a href="/app/patients">Patient Progress</a>
           <a href="/pricing.html">Pricing</a>
           <a href="/contact.html">Contact Us</a>
           <a href="/about.html">About Us</a>
-          <a href="/options.html">Options</a>
-
-          <!-- Optional dark/light toggle -->
-          <button
-            class="theme-toggle"
-            aria-label="Toggle dark mode"
-            @click=${this.toggleTheme}
-          >
-            Dark mode
-          </button>
+          
         </div>
       </header>
+      <!-- Spacer so that page content is pushed below the fixed header -->
+      <div class="spacer"></div>
     `;
   }
 }
-

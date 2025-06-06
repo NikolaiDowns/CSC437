@@ -37,7 +37,6 @@ export class ShareEntryCard extends LitElement {
     }
     .entry-card:hover {
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      border-color: var(--color-primary, #182d3b);
     }
     .info {
       display: flex;

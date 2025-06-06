@@ -170,7 +170,7 @@
       position: fixed;
       top: 0; left: 0; right: 0;
     
-      min-height: 50px !important;  
+      min-height: 50px !important;
       padding: .25rem 1rem !important;
     
       display: flex;
@@ -212,7 +212,7 @@
     }
     
     .box-icon-small svg path {
-      fill: var(--color-primary) !important;
+      fill: var(--color-primary);
       stroke: none;
     }
   
