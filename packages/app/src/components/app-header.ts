@@ -181,6 +181,7 @@ export class AppHeader extends LitElement {
 
           <!-- Always‐visible navigation links -->
           <a href="/app/share">Share Progress</a>
+          <a href="/app/patients">Patient Progress</a>
           <a href="/pricing.html">Pricing</a>
           <a href="/contact.html">Contact Us</a>
           <a href="/about.html">About Us</a>

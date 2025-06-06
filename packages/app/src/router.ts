@@ -4,6 +4,7 @@ import { html, TemplateResult } from "lit";
 import "./views/home-view";
 import "./views/track-progress-view";
 import "./views/share-progress-view";
+import "./views/patient-progress-view"; // ← import our new view
 
 export interface AppRoute {
   path: string;
@@ -11,13 +12,8 @@ export interface AppRoute {
   redirect?: string;
 }
 
-/** 
- * If no token, send user to login.html?redirect=… 
- * Otherwise, return the original viewTemplate. 
- */
 function requiresAuth(viewTemplate: TemplateResult): TemplateResult {
   const token = localStorage.getItem("token");
-  console.log("Auth check – token exists:", !!token);
   if (!token) {
     const currentPath = window.location.pathname;
     window.location.href = `/login.html?redirect=${encodeURIComponent(
@@ -34,23 +30,31 @@ export const routes: AppRoute[] = [
   {
     path: "/app",
     view: () => {
-      console.log("Rendering /app (unprotected; home-view)");
-      // No auth required for home-view:
       return html`<home-view></home-view>`;
     },
   },
   {
     path: "/app/track",
     view: () => {
-      console.log("Rendering /app/track (protected)");
       return requiresAuth(html`<track-progress-view></track-progress-view>`);
     },
   },
   {
     path: "/app/share",
     view: () => {
-      console.log("Rendering /app/share (protected)");
-      return requiresAuth(html`<share-progress-view></share-progress-view>`);
+      return requiresAuth(
+        html`<share-progress-view></share-progress-view>`
+      );
+    },
+  },
+
+  // ─── NEW ROUTE: Patient Progress ────────────────────────────────────────────────
+  {
+    path: "/app/patients",
+    view: () => {
+      return requiresAuth(
+        html`<patient-progress-view></patient-progress-view>`
+      );
     },
   },
 
