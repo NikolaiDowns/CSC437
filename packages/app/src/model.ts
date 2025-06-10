@@ -1,6 +1,6 @@
 // packages/app/src/model.ts
 
-// (You can define your own DataShare shape here, matching server’s user.ts)
+// DataShare shape
 export interface DataShare {
   withUserId: string;
   mode: "temporary" | "indefinite";
@@ -16,22 +16,18 @@ export interface User {
   tocVersion?: string;
   tocTimestamp?: Date;
 
-  shares?: DataShare[];   // we already had this
-  receives?: DataShare[]; // ← add this
+  shares?: DataShare[];
+  receives?: DataShare[];
 
   usage?: number[];
   isDeleted?: boolean;
   deletedAt?: Date;
 }
 
-/** 
- * Our app‐wide Model.  
- */
+// app-wide model
 export interface Model {
   currentUser?: User;
 }
 
-/** 
- * Initialize with no user loaded.
- */
+// Initialize with no user loaded
 export const init: Model = {};

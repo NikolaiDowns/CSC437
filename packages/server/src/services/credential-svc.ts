@@ -13,7 +13,7 @@ const credentialSchema = new Schema<Credential>(
 );
 const credentialModel = model<Credential>("Credential", credentialSchema);
 
-// 3a) create: fail if exists, else bcrypt.hash & save
+// create: fail if exists, else bcrypt.hash & save
 function create(username: string, password: string): Promise<Credential> {
   return credentialModel
     .find({ username })
@@ -25,7 +25,7 @@ function create(username: string, password: string): Promise<Credential> {
     .then(hash => new credentialModel({ username, hashedPassword: hash }).save());
 }
 
-// 3b) verify: lookup + bcrypt.compare
+// verify: lookup + bcrypt.compare
 function verify(username: string, password: string): Promise<string> {
   return credentialModel
     .find({ username })

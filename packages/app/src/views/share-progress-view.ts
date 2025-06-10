@@ -81,7 +81,6 @@ export class ShareProgressView extends View<Model, Msg> {
         userid: this.currentUser.id,
         withUserId: targetId,
         onSuccess: () => {
-          // Optionally do something; 
           // the MVU store is already updated by update()
         },
         onFailure: (err: Error) => {
@@ -117,12 +116,12 @@ export class ShareProgressView extends View<Model, Msg> {
       return html`<h2>Loading user…</h2>`;
     }
 
-    // (1) Show the "new share" form at top:
+    // Show the "new share" form at top:
     const formSection = html`
       <share-form-card @share-submit="${this.handleNewShare}"></share-form-card>
     `;
 
-    // (2) If no shares exist, show placeholder text:
+    // If no shares exist, show placeholder text:
     if (!this.currentUser.shares || this.currentUser.shares.length === 0) {
       return html`
         <h1>Share Your Progress</h1>
@@ -131,7 +130,7 @@ export class ShareProgressView extends View<Model, Msg> {
       `;
     }
 
-    // (3) Otherwise, list each share‐entry with a "Stop Sharing" button
+    // Otherwise, list each share‐entry with a "Stop Sharing" button
     const listSection = html`
       <div class="entries">
         ${this.currentUser.shares.map(

@@ -1,6 +1,6 @@
 // packages/app/src/views/track-progress-view.ts
 
-import "../components/bar-chart";      // <–– MAKE SURE bar-chart is imported so <bar-chart> is defined
+import "../components/bar-chart";
 import { View } from "@calpoly/mustang";
 import { html, css } from "lit";
 import { customElement, state } from "lit/decorators.js";
@@ -13,20 +13,19 @@ export class TrackProgressView extends View<Model, Msg> {
   private currentUser?: User;
 
   constructor() {
-    // ← Must match exactly <mu-store provides="truewalk:model">
     super("truewalk:model");
   }
 
-  // As soon as the view is first attached, dispatch "user/load" to trigger update() → fetch("/api/auth/me"):
+  // Once view is attached, fetch("/api/auth/me"):
   override connectedCallback() {
     super.connectedCallback();
     this.dispatchMessage(["user/load", {}]);
   }
 
-  // Remove the changedProps.has("model") guard—just compare model.currentUser every time:
+  // Whenever the model changes, check if currentUser has changed:
   protected updated(changedProps: Map<string, any>) {
     super.updated(changedProps);
-    // Whenever the store’s model.currentUser becomes non‐undefined and differs from our local state:
+    // Whenever the store’s model.currentUser becomes non‐undefined
     if (this.model.currentUser !== this.currentUser) {
       this.currentUser = this.model.currentUser;
     }
@@ -44,12 +43,12 @@ export class TrackProgressView extends View<Model, Msg> {
   }
 
   override render() {
-    // Until `this.currentUser.usage` is really set, show a loading message:
+    // Show a loading message:
     if (!this.currentUser || !this.currentUser.usage) {
       return html`<h2>Loading usage data…</h2>`;
     }
 
-    // Now that we have a full `usage: number[]` array, split it into the eight charts:
+    // Split number[] array into eight charts:
     const usage = this.currentUser.usage;
     const SIZES = [24, 24, 7, 7, 31, 31, 12, 12];
     const VARIANTS: ("day" | "week" | "month" | "year")[] = [

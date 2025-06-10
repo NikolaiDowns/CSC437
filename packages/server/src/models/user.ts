@@ -15,9 +15,9 @@ export interface User {
     tocVersion?: string;
     tocTimestamp?: Date;
   
-    shares?: DataShare[];
-    receives?: DataShare[]; // NEW
-    usage?: number[];
+    shares?: DataShare[];   // Every person this user is sharing data with
+    receives?: DataShare[]; // Every person this user is receiving data from
+    usage?: number[];       // Users data
     isDeleted?: boolean;
     deletedAt?: Date;
   }

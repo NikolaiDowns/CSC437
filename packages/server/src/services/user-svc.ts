@@ -3,9 +3,7 @@
 import { Schema, model } from "mongoose";
 import { User, DataShare } from "../models/user";
 
-// ───────────────────────────────────────────────────────────────────────────────
-// Sub-document schema for DataShare (used both in shares[] and receives[]).
-// ───────────────────────────────────────────────────────────────────────────────
+// Data Sahre Schema
 const DataShareSchema = new Schema<DataShare>(
   {
     withUserId: {
@@ -29,9 +27,7 @@ const DataShareSchema = new Schema<DataShare>(
   { _id: false }
 );
 
-// ───────────────────────────────────────────────────────────────────────────────
-// Main User schema: now with a “receives” array as well as “shares”.
-// ───────────────────────────────────────────────────────────────────────────────
+// Main User schema: receives and shares
 const UserSchema = new Schema<User>(
   {
     id: {
@@ -57,7 +53,7 @@ const UserSchema = new Schema<User>(
       default: [],
     },
     receives: {
-      type: [DataShareSchema], // ← NEW field
+      type: [DataShareSchema],
       default: [],
     },
 
@@ -106,8 +102,6 @@ function remove(id: string): Promise<void> {
   });
 }
 
-// ← Make sure UserModel is a named export, so routes/users.ts can import it:
 export { UserModel };
 
-// ← Also keep the default export so you can do `import Users from "./user-svc"`
 export default { index, get, create, update, remove, UserModel };

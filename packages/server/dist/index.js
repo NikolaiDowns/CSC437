@@ -49,11 +49,11 @@ app.use("/api/auth", import_auth.default);
 app.use("/api/users", import_auth.authenticateUser, import_users.default);
 app.get("/hello", (_req, res) => res.send("Hello, World"));
 (0, import_mongo.connect)("Truewalk0").then(() => {
-  console.log("\u{1F7E2} MongoDB connected");
-  console.log("\u{1F7E2} Starting server\u2026");
+  console.log("MongoDB connected");
+  console.log("Starting server\u2026");
   const host = process.env.HOST || "0.0.0.0";
   app.listen(port, host, () => {
-    console.log(`\u{1F7E2} Server listening on http://${host}:${port}`);
+    console.log(`Server listening on http://${host}:${port}`);
   });
 }).catch((err) => {
   console.error("\u26A0\uFE0F MongoDB connection failed:", err);

@@ -3,7 +3,7 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-// shape of shareInfo (same as before)
+// shape of shareInfo
 interface DataShare {
   withUserId: string;
   mode: "temporary" | "indefinite";
@@ -13,7 +13,7 @@ interface DataShare {
 
 @customElement("share-entry-card")
 export class ShareEntryCard extends LitElement {
-  /** The DataShare record for this entry */
+  /** DataShare record */
   @property({ type: Object }) dataShareinfo!: DataShare;
 
   static styles = css`
@@ -66,7 +66,7 @@ export class ShareEntryCard extends LitElement {
   `;
 
   private handleStopClick() {
-    // Fire an event so parent can remove this share
+    // Send event so parent can remove this share
     this.dispatchEvent(
       new CustomEvent("stop-share", {
         detail: {
@@ -80,7 +80,7 @@ export class ShareEntryCard extends LitElement {
 
   render() {
     const info = this.dataShareinfo;
-    // Determine text: “Shared Until: …” or “Expired on: …”
+    // Display “Shared Until: …” or “Expired on: …”
     let statusText: string;
     if (info.mode === "temporary" && info.expiresAt) {
       const expires = new Date(info.expiresAt);

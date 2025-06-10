@@ -5,7 +5,7 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("options-menu")
 export class OptionsMenu extends LitElement {
-  // Render into Light DOM so that our embedded <style> actually applies
+  // Bring in default styles
   protected createRenderRoot() {
     return this;
   }

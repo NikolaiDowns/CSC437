@@ -6,10 +6,7 @@ import { DataShare } from "../models/user";
 
 const router = express.Router();
 
-/**
- * GET /api/users
- *   → return an array of all user documents
- */
+
 router.get("/", async (_req: Request, res: Response) => {
   try {
     const allUsers = await Users.index();
@@ -22,8 +19,8 @@ router.get("/", async (_req: Request, res: Response) => {
 
 /**
  * GET /api/users/:id
- *   → return a single user document by “id”
- *   → if no user found, return 404
+ *  return a single user document by “id”
+ *  if no user found, return 404
  */
 router.get("/:id", async (req: Request, res: Response) => {
   try {
@@ -41,10 +38,10 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 /**
  * POST /api/users
- *   → create a brand‐new user document
- *   → expects the full User shape in req.body
- *   → returns 201 + JSON(newUser) on success
- *   → returns 400 if validation fails
+ *   create a brand‐new user document
+ *   expects the full User shape in req.body
+ *   returns 201 + JSON(newUser) on success
+ *   returns 400 if validation fails
  */
 router.post("/", async (req: Request, res: Response) => {
   try {
@@ -58,11 +55,11 @@ router.post("/", async (req: Request, res: Response) => {
 
 /**
  * PUT /api/users/:id
- *   → replace the entire User document with req.body (the full User object)
- *   → requires that (req as any).userId === req.params.id
- *   → returns 403 if someone tries to update another user’s record
- *   → returns 404 if no such user exists
- *   → otherwise returns 200 + JSON(updatedUser)
+ *   replace the entire User document with req.body (the full User object)
+ *   requires that (req as any).userId === req.params.id
+ *   returns 403 if someone tries to update another user’s record
+ *   returns 404 if no such user exists
+ *   otherwise returns 200 + JSON(updatedUser)
  */
 router.put("/:id", async (req: Request, res: Response) => {
   try {
@@ -90,8 +87,8 @@ router.put("/:id", async (req: Request, res: Response) => {
 
 /**
  * DELETE /api/users/:id
- *   → remove a user from the database
- *   → returns 204 on success, or 404 if no such user exists
+ *   remove a user from the database
+ *   returns 204 on success, or 404 if no such user exists
  */
 router.delete("/:id", async (req: Request, res: Response) => {
   try {
@@ -106,39 +103,39 @@ router.delete("/:id", async (req: Request, res: Response) => {
 
 /**
  * POST /api/users/:id/share
- *   → “id” is the sharer’s username (the logged‐in user’s ID)
- *   → expects at least { withUserId: string, mode: "temporary"|"indefinite", sharedAt?: string, expiresAt?: string }
- *   → if mode is missing or invalid, defaults to "indefinite"
- *   → pushes one DataShare record into sharer.shares[]
- *   → pushes a corresponding DataShare record into recipient.receives[]
- *   → requires that (req as any).userId === req.params.id
- *   → returns 200 + JSON(updatedSharer) on success
+ *   “id” is the sharer’s username (the logged‐in user’s ID)
+ *   expects at least { withUserId: string, mode: "temporary"|"indefinite", sharedAt?: string, expiresAt?: string }
+ *   if mode is missing or invalid, defaults to "indefinite"
+ *   pushes one DataShare record into sharer.shares[]
+ *   pushes a corresponding DataShare record into recipient.receives[]
+ *   requires that (req as any).userId === req.params.id
+ *   returns 200 + JSON(updatedSharer) on success
  */
 router.post("/:id/share", async (req: Request, res: Response) => {
   try {
     const sharerId = req.params.id;
 
-    // 1) Ensure the logged‐in user is sharing from their own account:
+    // Ensure the logged‐in user is sharing from their own account:
     if ((req as any).userId !== sharerId) {
       return res.status(403).send("Forbidden: cannot share from another user");
     }
 
-    // 2) Log the raw body so we can inspect it if something goes wrong:
-    console.log("▶ Incoming /share body:", JSON.stringify(req.body, null, 2));
+    // Log the raw body so we can inspect it if something goes wrong:
+    console.log("Incoming /share body:", JSON.stringify(req.body, null, 2));
 
-    // 3) Pull out fields (they may or may not have provided mode/sharedAt/expiresAt):
+    // Pull out fields (they may or may not have provided mode/sharedAt/expiresAt):
     let { withUserId, mode, sharedAt, expiresAt } = req.body as Partial<DataShare>;
 
-    // 4) Validate that `withUserId` is a non‐empty string:
+    // Validate that `withUserId` is a non‐empty string:
     if (typeof withUserId !== "string" || withUserId.trim() === "") {
       return res.status(400).send("Invalid DataShare: missing withUserId");
     }
 
-    // 5) If they gave a valid mode "temporary", keep it; otherwise default to "indefinite":
+    // If they gave a valid mode "temporary", keep it; otherwise default to "indefinite":
     let shareMode: "temporary" | "indefinite" =
       mode === "temporary" ? "temporary" : "indefinite";
 
-    // 6) Parse sharedAt if valid ISO date, else use now:
+    // Parse sharedAt if valid ISO date, else use now:
     let sharedAtDate: Date;
     if (typeof sharedAt === "string" && !isNaN(Date.parse(sharedAt))) {
       sharedAtDate = new Date(sharedAt);
@@ -146,7 +143,7 @@ router.post("/:id/share", async (req: Request, res: Response) => {
       sharedAtDate = new Date();
     }
 
-    // 7) If “temporary” and they provided a valid expiresAt, parse it; otherwise undefined:
+    // If “temporary” and they provided a valid expiresAt, parse it; otherwise undefined:
     let expiresAtDate: Date | undefined = undefined;
     if (
       shareMode === "temporary" &&
@@ -156,7 +153,7 @@ router.post("/:id/share", async (req: Request, res: Response) => {
       expiresAtDate = new Date(expiresAt);
     }
 
-    // 8) Build the outgoing share record for sharer.shares[]:
+    // Build the outgoing share record for sharer.shares[]:
     const outgoingShare: DataShare = {
       withUserId: withUserId.trim(),
       mode: shareMode,
@@ -164,7 +161,7 @@ router.post("/:id/share", async (req: Request, res: Response) => {
       expiresAt: expiresAtDate,
     };
 
-    // 9) Push it into the sharer’s shares[]:
+    // Push it into the sharer’s shares[]:
     const updatedSharer = await UserModel.findOneAndUpdate(
       { id: sharerId },
       { $push: { shares: outgoingShare } },
@@ -175,7 +172,7 @@ router.post("/:id/share", async (req: Request, res: Response) => {
       return res.status(404).send(`Sharer user "${sharerId}" not found`);
     }
 
-    // 10) Build the “reverse” DataShare for recipient.receives[]:
+    // Build the “reverse” DataShare for recipient.receives[]:
     const incomingForRecipient: DataShare = {
       withUserId: sharerId,
       mode: shareMode,
@@ -183,7 +180,7 @@ router.post("/:id/share", async (req: Request, res: Response) => {
       expiresAt: expiresAtDate,
     };
 
-    // 11) Push that into the recipient’s receives[]:
+    // Push that into the recipient’s receives[]:
     const updatedRecipient = await UserModel.findOneAndUpdate(
       { id: withUserId.trim() },
       { $push: { receives: incomingForRecipient } },
@@ -193,11 +190,11 @@ router.post("/:id/share", async (req: Request, res: Response) => {
     if (!updatedRecipient) {
       // If the named recipient doesn’t exist, just warn. We still return the updated sharer.
       console.warn(
-        `⚠️  /share: Sharer was updated, but recipient "${withUserId.trim()}" not found.`
+        `/share: Sharer was updated, but recipient "${withUserId.trim()}" not found.`
       );
     }
 
-    // 12) Return the updated sharer document (with its shares[] now containing the new share):
+    // Return the updated sharer document (with its shares[] now containing the new share):
     return res.status(200).json(updatedSharer);
   } catch (err: any) {
     console.error("POST /api/users/:id/share error:", err);
@@ -207,13 +204,13 @@ router.post("/:id/share", async (req: Request, res: Response) => {
 
 /**
  * DELETE /api/users/:id/share/:withUserId
- *   → “id” is the sharer’s username (the logged‐in user’s ID)
- *   → “withUserId” is the other user we want to stop sharing with
- *   → removes the share from both sides:
+ *   “id” is the sharer’s username (the logged‐in user’s ID)
+ *   “withUserId” is the other user we want to stop sharing with
+ *   removes the share from both sides:
  *      1) $pull from sharer.shares where withUserId matches
  *      2) $pull from recipient.receives where withUserId === sharer
- *   → requires that (req as any).userId === req.params.id
- *   → returns 200 + JSON(updatedSharer) on success
+ *   requires that (req as any).userId === req.params.id
+ *   returns 200 + JSON(updatedSharer) on success
  */
 router.delete(
   "/:id/share/:withUserId",
@@ -222,14 +219,14 @@ router.delete(
       const sharerId = req.params.id;
       const targetId = req.params.withUserId;
 
-      // 1) Security check: only the logged‐in user can stop sharing from their own account
+      // Security check: only the logged‐in user can stop sharing from their own account
       if ((req as any).userId !== sharerId) {
         return res
           .status(403)
           .send("Forbidden: cannot stop sharing on behalf of another user");
       }
 
-      // 2) Pull (remove) from sharer.shares
+      // Pull (remove) from sharer.shares
       const updatedSharer = await UserModel.findOneAndUpdate(
         { id: sharerId },
         { $pull: { shares: { withUserId: targetId } } },
@@ -242,7 +239,7 @@ router.delete(
           .send(`Sharer user "${sharerId}" not found`);
       }
 
-      // 3) Pull (remove) from recipient.receives
+      // Pull (remove) from recipient.receives
       const updatedRecipient = await UserModel.findOneAndUpdate(
         { id: targetId.trim() },
         { $pull: { receives: { withUserId: sharerId } } },
@@ -252,7 +249,7 @@ router.delete(
       if (!updatedRecipient) {
         // If recipient doesn’t exist, log a warning but still return the updatedSharer
         console.warn(
-          `⚠️  /share: Stopped share from "${sharerId}" to "${targetId}", but recipient "${targetId}" not found.`
+          `/share: Stopped share from "${sharerId}" to "${targetId}", but recipient "${targetId}" not found.`
         );
       }
 

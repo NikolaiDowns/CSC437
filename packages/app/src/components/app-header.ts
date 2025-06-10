@@ -7,20 +7,17 @@ import "./options-menu"; // ← Import the <options-menu> we just created
 
 @customElement("app-header")
 export class AppHeader extends LitElement {
-  // ─── Track whether the user is signed‐in and their username ────────────────
+  // Check if signed‐in
   @state() private authenticated = false;
   @state() private username: string | null = null;
   private authObserver!: Observer<any>;
 
-  // ─── Render into light DOM so global styles.css can still apply ────────────
+  // Use styles.css
   protected createRenderRoot() {
     return this;
   }
 
   static styles = css`
-    /* ───────────────────────────────────────────────────────────────────────── */
-    /* FIXED HEADER BAR                                                         */
-    /* ───────────────────────────────────────────────────────────────────────── */
     header.toolbar {
       position: fixed;
       top: 0;
@@ -37,9 +34,6 @@ export class AppHeader extends LitElement {
       z-index: 1000;
     }
 
-    /* ───────────────────────────────────────────────────────────────────────── */
-    /* LEFT: logo SVG + “TRUE WALK” (link)                                        */
-    /* ───────────────────────────────────────────────────────────────────────── */
     .toolbar-left {
       display: flex;
       align-items: center;
@@ -49,7 +43,7 @@ export class AppHeader extends LitElement {
       width: 32px;
       height: 32px;
     }
-    /* “TRUE WALK” must be WalkHard blue (#0353A4) and a link to /app */
+
     .toolbar-left a {
       color: #0353A4;           /* WalkHard blue */
       text-decoration: none;    /* remove underline */
@@ -65,9 +59,6 @@ export class AppHeader extends LitElement {
       cursor: default;
     }
 
-    /* ───────────────────────────────────────────────────────────────────────── */
-    /* RIGHT SIDE: greeting / nav links / options                                  */
-    /* ───────────────────────────────────────────────────────────────────────── */
     .toolbar-right {
       display: flex;
       align-items: center;
@@ -95,9 +86,6 @@ export class AppHeader extends LitElement {
       text-decoration: underline;
     }
 
-    /* ───────────────────────────────────────────────────────────────────────── */
-    /* SPACER so that main content begins below the fixed header                   */
-    /* ───────────────────────────────────────────────────────────────────────── */
     .spacer {
       height: 60px;
       width: 100%;
@@ -121,29 +109,28 @@ export class AppHeader extends LitElement {
       this.username = storedUsername;
     }
 
-    // Observe Mustang’s Auth context to pick up any sign‐in changes
+    // Pick up any sign‐in changes
     this.authObserver.observe((authState: any) => {
       if (authState.user?.authenticated) {
         this.authenticated = true;
         this.username = authState.user.username || this.username;
       }
-      // If they sign out via the Auth provider, we won’t clear localStorage here.
     });
   }
 
-  // ─── Navigate to login.html (with redirect) ─────────────────────────────────
+  // Redirect to login.html
   private goLogin() {
     const here = window.location.pathname;
     window.location.href = `/login.html?redirect=${encodeURIComponent(here)}`;
   }
 
-  // ─── Navigate to signup.html (with redirect) ────────────────────────────────
+  // Redirect to signup.html
   private goSignup() {
     const here = window.location.pathname;
     window.location.href = `/signup.html?redirect=${encodeURIComponent(here)}`;
   }
 
-  // ─── Handle “Sign Out” from <options-menu> ─────────────────────────────────
+  // Handle “Sign Out”
   private doSignOut(e: MouseEvent) {
     // Relay the event into Mustang’s Auth context:
     Events.relay(e, "auth:message", ["auth/signout"]);
@@ -153,7 +140,7 @@ export class AppHeader extends LitElement {
     window.location.reload();
   }
 
-  // ─── Handle “Dark mode” toggle from <options-menu> ──────────────────────────
+  // Handle “Dark mode” toggle
   private toggleTheme() {
     const isDark = document.documentElement.classList.toggle("dark");
     const btn = this.renderRoot.querySelector<HTMLButtonElement>(".theme-toggle");

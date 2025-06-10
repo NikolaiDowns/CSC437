@@ -70,7 +70,6 @@ const UserSchema = new import_mongoose.Schema(
     },
     receives: {
       type: [DataShareSchema],
-      // ← NEW field
       default: []
     },
     usage: {

@@ -7,15 +7,13 @@ import { Msg } from "./messages";
 export default function update(
   message: Msg,
   apply: Update.ApplyMap<Model>,
-  _user: any // we read JWT manually, not using Mustang’s Auth.User
+  _user: any // read JWT manually, not using Mustang’s Auth.User
 ) {
   switch (message[0]) {
-    //
-    // ─── SHARE/SAVE ────────────────────────────────────────────────────────────────
-    //
+    //  SHARE/SAVE 
     case "share/save": {
       const {
-        userid, // logged‐in user’s ID
+        userid,
         share,
         onSuccess,
         onFailure,
@@ -24,7 +22,7 @@ export default function update(
       let current: Model | undefined;
       apply((m) => {
         current = m;
-        return m; // just capture `m`, no changes yet
+        return m;
       });
       if (!current || !current.currentUser) {
         const err = new Error("No loaded user to update shares");
@@ -74,9 +72,7 @@ export default function update(
       break;
     }
 
-    //
-    // ─── SHARE/STOP ────────────────────────────────────────────────────────────────
-    //
+    // SHARE/STOP 
     case "share/stop": {
       const { userid, withUserId, onSuccess, onFailure } = message[1];
 
@@ -130,9 +126,7 @@ export default function update(
       break;
     }
 
-    //
-    // ─── USER/LOAD ───────────────────────────────────────────────────────────────────
-    //
+    //  USER/LOAD
     case "user/load": {
       const token = localStorage.getItem("token") || "";
       fetch("http://localhost:3000/api/auth/me", {
@@ -165,18 +159,14 @@ export default function update(
       break;
     }
 
-    //
-    // ─── USER/SET ────────────────────────────────────────────────────────────────────
-    //
+    // USER/SET 
     case "user/set": {
       const { user: newUser } = message[1];
       apply((model) => ({ ...model, currentUser: newUser }));
       break;
     }
 
-    //
-    // ─── USER/CLEAR ──────────────────────────────────────────────────────────────────
-    //
+    // USER/CLEAR
     case "user/clear": {
       apply((model) => {
         const next = { ...model };
@@ -186,9 +176,7 @@ export default function update(
       break;
     }
 
-    //
-    // ─── EXHAUSTIVE CHECK ─────────────────────────────────────────────────────────────
-    //
+    // EXHAUSTIVE CHECK
     default: {
       const _exhaustiveCheck: never = message[0];
       throw new Error(`Unhandled message "${_exhaustiveCheck}"`);

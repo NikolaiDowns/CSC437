@@ -37,7 +37,6 @@
       const form     = document.getElementById('login-form');
       const userIn   = document.getElementById('username');
       const passIn   = document.getElementById('password');
-      // pick up ?redirect=… (defaults back to track_progress.html)
       const params   = new URLSearchParams(window.location.search);
       const redirect = params.get('redirect') || 'track_progress.html';
 

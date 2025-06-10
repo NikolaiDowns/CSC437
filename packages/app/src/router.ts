@@ -4,7 +4,7 @@ import { html, TemplateResult } from "lit";
 import "./views/home-view";
 import "./views/track-progress-view";
 import "./views/share-progress-view";
-import "./views/patient-progress-view"; // ← import our new view
+import "./views/patient-progress-view";
 
 export interface AppRoute {
   path: string;
@@ -27,18 +27,23 @@ function requiresAuth(viewTemplate: TemplateResult): TemplateResult {
 export const routes: AppRoute[] = [
   { path: "/", redirect: "/app" },
 
+  // Root page
   {
     path: "/app",
     view: () => {
       return html`<home-view></home-view>`;
     },
   },
+
+  // Tracking Progress View
   {
     path: "/app/track",
     view: () => {
       return requiresAuth(html`<track-progress-view></track-progress-view>`);
     },
   },
+
+  // Sharing Progress View
   {
     path: "/app/share",
     view: () => {
@@ -48,7 +53,7 @@ export const routes: AppRoute[] = [
     },
   },
 
-  // ─── NEW ROUTE: Patient Progress ────────────────────────────────────────────────
+  // Patient Progress View
   {
     path: "/app/patients",
     view: () => {

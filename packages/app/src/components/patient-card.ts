@@ -4,7 +4,7 @@ import { html, LitElement, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import "../components/bar-chart"; // Ensure <bar-chart> is registered
 
-// The shape of the shareInfo we expect
+// The shape of the shareInfo
 interface DataShare {
   withUserId: string;
   mode: "temporary" | "indefinite";
@@ -14,27 +14,24 @@ interface DataShare {
 
 @customElement("patient-card")
 export class PatientCard extends LitElement {
-  // ─── PUBLIC PROPERTIES ────────────────────────────────────────────────────────
+  // PUBLIC PROPERTIES
 
-  /** An array of 156 numbers (we’ll slice into eight bar‐chart data sets) */
+  // Cut array of 156 numbers into eight bar‐chart data sets
   @property({ type: Array }) dataUsage: number[] = [];
 
-  /**
-   * An object containing share metadata:
-   * { withUserId: string, mode: "temporary"|"indefinite", sharedAt: string, expiresAt?: string }
-   */
+  // Datashare object
   @property({ type: Object }) dataShareinfo!: DataShare;
 
-  // ─── LOCAL STATE ────────────────────────────────────────────────────────────────
+  // LOCAL STATE 
 
-  /** Whether this card is expanded (showing charts) or collapsed (only header). */
+  // State: expanded vs retracted
   @state() private isExpanded = false;
 
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
 
-  // ─── STYLES: all embedded here to match what was in styles.css ─────────────────
+  // STYLES
 
   static styles = css`
     :host {

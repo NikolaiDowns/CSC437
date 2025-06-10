@@ -20,7 +20,6 @@ export type Msg =
         onFailure?: (err: Error) => void;
       }
     ]
-  // ← NEW: "share/stop"
   | [
       "share/stop",
       {

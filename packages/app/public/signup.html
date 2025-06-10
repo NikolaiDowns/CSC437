@@ -4,7 +4,9 @@
 <head>
   <meta charset="utf-8" />
   <title>Create an Account</title>
+  <!-- external stylesheet -->
   <link rel="stylesheet" href="styles.css" />
+  <!-- page-specific styles -->
   <style>
     body { font-family: sans-serif; padding: 2rem; }
     form { max-width: 320px; margin: auto; display: grid; gap: 1rem; }
@@ -15,39 +17,66 @@
 </head>
 <body>
 
+  <!-- page heading -->
   <h2 style="text-align:center;">Create an Account</h2>
 
+  <!-- signup form -->
   <form id="signup-form">
+    <!-- username field -->
     <label>
       Username:
-      <input type="text" id="username" name="username" autocomplete="username" required />
+      <input
+        type="text"
+        id="username"
+        name="username"
+        autocomplete="username"
+        required
+      />
     </label>
+
+    <!-- password field -->
     <label>
       Password:
-      <input type="password" id="password" name="password" autocomplete="new-password" required />
+      <input
+        type="password"
+        id="password"
+        name="password"
+        autocomplete="new-password"
+        required
+      />
     </label>
+
+    <!-- submit button -->
     <button type="submit">Sign Up</button>
+
+    <!-- hidden error message container -->
     <p class="error" id="error-msg" style="display:none;"></p>
   </form>
 
+  <!-- link to login page for existing users -->
   <p style="text-align:center;">
-    Already have an account? <a href="login.html">Log in instead</a>.
+    Already have an account?
+    <a href="login.html">Log in instead</a>.
   </p>
 
   <script>
     (function() {
+      // grab form elements
       const form     = document.getElementById('signup-form');
       const userIn   = document.getElementById('username');
       const passIn   = document.getElementById('password');
       const errMsg   = document.getElementById('error-msg');
-      // honor ?redirect=… or default to track_progress
+
+      // check for redirect param, default to track_progress.html
       const params   = new URLSearchParams(window.location.search);
       const redirect = params.get('redirect') || 'track_progress.html';
 
+      // form submission handler
       form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errMsg.style.display = 'none';
+        e.preventDefault();            // prevent page reload
+        errMsg.style.display = 'none'; // hide any old error
 
+        // simple client-side validation
         const username = userIn.value.trim();
         const password = passIn.value;
         if (!username || !password) {
@@ -57,6 +86,7 @@
         }
 
         try {
+          // send signup request
           const res = await fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -64,18 +94,20 @@
           });
 
           if (!res.ok) {
+            // show server error message
             const body = await res.json().catch(() => null);
             errMsg.textContent = body?.error || 'Registration failed';
             errMsg.style.display = '';
             return;
           }
 
+          // on success, store JWT and redirect
           const { token } = await res.json();
-          // store JWT and redirect
           localStorage.setItem('token', token);
           window.location.href = redirect;
 
         } catch (err) {
+          // network or unexpected error
           console.error(err);
           errMsg.textContent = 'Network error';
           errMsg.style.display = '';
@@ -83,5 +115,6 @@
       });
     })();
   </script>
+
 </body>
 </html>

@@ -11,11 +11,7 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET || "NOT_A_SECRET";
 
 const router = express.Router();
 
-/**
- * JWT‐check middleware.  If OPTIONS → short‐circuit to next(),
- * otherwise read "Authorization: Bearer <token>" header, verify JWT,
- * and attach req.userId = payload.username → next().
- */
+
 export function authenticateUser(
   req: Request,
   res: Response,
@@ -53,7 +49,7 @@ function generateAccessToken(username: string): Promise<string> {
   );
 }
 
-// 1) Register: create credentials + create an empty User record + return a 201 + { token }
+// Register: create credentials + create a User record
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
   if (typeof username !== "string" || typeof password !== "string") {
@@ -61,18 +57,28 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    // create credentials in your credential store
+    // Create credentials (username/password) in your credential store:
     await credentials.create(username, password);
 
-    // create a matching User record in your Users collection (with no shares, no usage yet)
+    // Generate fake usage data
+    const randomUsage: number[] = Array.from(
+      { length: 156 },
+      () => Math.floor(Math.random() * 100)
+    );
+
+    // Create a matching User record in MongoDB, including that random “usage”:
     await Users.create({
       id: username,
       name: username,
       tocAccepted: false,
       shares: [],
-      usage: [],
+      receives: [],          // ensure “receives” is initialized
+      usage: randomUsage,    // 156 random ints here
+      isDeleted: false,
+      deletedAt: undefined,
     });
 
+    // Issue a JWT and return it:
     const token = await generateAccessToken(username);
     return res.status(201).json({ token });
   } catch (err: any) {
@@ -80,7 +86,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// 2) Login: verify credentials + return a 200 + { token }
+// Login: verify credentials
 router.post("/login", async (req: Request, res: Response) => {
   const { username, password } = req.body;
   if (typeof username !== "string" || typeof password !== "string") {
@@ -96,7 +102,7 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-// 3) Fetch current user (protected by authenticateUser)
+// Fetch current user (protected by authenticateUser)
 router.get(
   "/me",
   authenticateUser,

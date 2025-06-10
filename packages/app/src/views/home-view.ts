@@ -5,7 +5,7 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("home-view")
 export class HomeView extends LitElement {
-  // Opt out of Shadow DOM so global CSS (styles.css) applies
+  // Use styles.css
   protected createRenderRoot() {
     return this;
   }
